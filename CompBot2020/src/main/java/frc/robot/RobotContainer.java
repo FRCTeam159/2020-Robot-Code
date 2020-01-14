@@ -27,6 +27,14 @@ public class RobotContainer {
   private final DriveWithGamepad driveWithGamepad = new DriveWithGamepad(driveTrain);
   private final Shooter shooter = new Shooter();
   private final ShooterCommands shooterCommands = new ShooterCommands(shooter);
+  private final Intake intake = new Intake();
+  private final IntakeCommands intakeCommands = new IntakeCommands(intake);
+  private final Climber climber = new Climber();
+  private final ClimberCommands climberCommands = new ClimberCommands(climber);
+  private final ColorWheel colorWheel = new ColorWheel();
+  private final ColorWheelCommands colorWheelCommands = new ColorWheelCommands(colorWheel);
+  private final Targeting targeting = new Targeting();
+  private final TargetingCommands targetingCommands =  new TargetingCommands(targeting);
 
 
   /**
