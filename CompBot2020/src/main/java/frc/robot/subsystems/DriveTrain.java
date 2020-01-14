@@ -7,21 +7,15 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.robot.RobotMap;
-import frc.robot.commands.DriveWithGamepad;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.CANEncoder;
-import frc.robot.subsystems.SparkMotor;
+import frc.robot.Constants;
+import frc.robot.commands.DriveWithGamepad;
 
 /**
  * Add your docs here.
  */
-public class DriveTrain extends Subsystem implements RobotMap {
+public class DriveTrain extends SubsystemBase implements Constants {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 	private SparkMotor frontLeft;
@@ -43,12 +37,6 @@ public class DriveTrain extends Subsystem implements RobotMap {
 	//private ADXRS450_Gyro gyro;
 	//private DoubleSolenoid gearPneumatic;
 	public boolean lowGear = false;
-
-	@Override
-	public void initDefaultCommand() {
-		// Set the default command for a subsystem here.
-		setDefaultCommand(new DriveWithGamepad());
-	}
 
 	public DriveTrain() {
 		frontLeft = new SparkMotor(FRONT_LEFT);
