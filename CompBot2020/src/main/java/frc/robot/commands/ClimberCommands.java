@@ -41,4 +41,7 @@ public class ClimberCommands extends CommandBase {
   public boolean isFinished() {
     return false;
   }
+public void climb(){
+  climber.initateClimb();
+}
 }
