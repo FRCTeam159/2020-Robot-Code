@@ -35,6 +35,8 @@ public class RobotContainer {
   private final ColorWheelCommands colorWheelCommands = new ColorWheelCommands(colorWheel);
   private final Targeting targeting = new Targeting();
   private final TargetingCommands targetingCommands =  new TargetingCommands(targeting);
+  private final VisionProcess vision = new VisionProcess();
+
 
 
   /**
@@ -42,8 +44,14 @@ public class RobotContainer {
    */
   public RobotContainer() {
     // Configure the button bindings
+    vision.init();
+    vision.start();
     driveTrain.setDefaultCommand(driveWithGamepad);
     shooter.setDefaultCommand(shooterCommands);
+    targeting.setDefaultCommand(targetingCommands);
+    colorWheel.setDefaultCommand(colorWheelCommands);
+    intake.setDefaultCommand(intakeCommands);
+    climber.setDefaultCommand(climberCommands);
     configureButtonBindings();
   }
 
@@ -64,6 +72,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return null;
+    return new AutonomousCommand();
   }
 }

@@ -42,6 +42,6 @@ public class ClimberCommands extends CommandBase {
     return false;
   }
 public void climb(){
-  climber.initateClimb();
+  climber.initiateClimb();
 }
 }

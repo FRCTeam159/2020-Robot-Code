@@ -8,12 +8,10 @@
 package frc.robot.subsystems;
 
 import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.cameraserver.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.CvSink;
 import org.opencv.core.Mat;
