@@ -33,7 +33,7 @@ public class RobotContainer {
   private final ClimberCommands climberCommands = new ClimberCommands(climber);
   private final ColorWheel colorWheel = new ColorWheel();
   private final ColorWheelCommands colorWheelCommands = new ColorWheelCommands(colorWheel);
-  private final Targeting targeting = new Targeting();
+  public static final Targeting targeting = new Targeting();
   private final TargetingCommands targetingCommands =  new TargetingCommands(targeting);
   private final VisionProcess vision = new VisionProcess();
 
