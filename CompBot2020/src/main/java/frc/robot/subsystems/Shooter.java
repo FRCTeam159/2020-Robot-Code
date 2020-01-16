@@ -17,7 +17,7 @@ public class Shooter extends SubsystemBase {
   public static int motorValue = 0;
   private SparkMotor shootMotor;
   public Shooter() {
-    shootMotor = new SparkMotor(5);
+    shootMotor = new SparkMotor(0);
   }
 
   @Override
@@ -26,7 +26,7 @@ public class Shooter extends SubsystemBase {
   }
   public void log(){
     count++;
-    System.out.println("IT'S WORKING ANAKIN." + count);
+   // System.out.println("IT'S WORKING ANAKIN." + count);
 
   }
   public double motorCoversion(int rpm){

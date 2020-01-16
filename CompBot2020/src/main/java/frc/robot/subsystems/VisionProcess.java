@@ -11,7 +11,7 @@ import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.*;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.CvSink;
 import org.opencv.core.Mat;
@@ -29,10 +29,10 @@ import frc.robot.subsystems.GripPipeline;
  */
 public class VisionProcess extends Thread {
   static UsbCamera camera;
-  public static double targetWidth = 13.0; // physical width of target (inches)
-  public static double targetHeight = 8.0; // physical height of target (inches)
-  public static double distanceToFillWidth = 16.5; // measured distance where target just fills screen (width)
-  public static double distanceToFillHeight = 13.5; // measured distance where target just fills screen (height)
+  public static double targetWidth = 21.0; // physical width of target (inches)
+  public static double targetHeight = 4.0; // physical height of target (inches)
+  public static double distanceToFillWidth = 27.0; // measured distance where target just fills screen (width)
+  public static double distanceToFillHeight = 6.25; // measured distance where target just fills screen (height)
   public static double cameraFovW = 2 * Math.atan(0.5 * targetWidth / distanceToFillWidth); // 41.8 degrees
   public static double cameraFovH = 2 * Math.atan(0.5 * targetHeight / distanceToFillHeight); // 33.0 degrees
 
@@ -46,18 +46,18 @@ public class VisionProcess extends Thread {
   double angleFactorWidth = Math.toDegrees(cameraFovW) / imageWidth;
   double angleFactorHeight = Math.toDegrees(cameraFovH) / imageHeight;
   // expected width/height ratio
-  double targetAspectRatio=targetWidth/targetHeight; 
+  double targetAspectRatio = targetWidth / targetHeight;
 
   public void init() {
     camera = CameraServer.getInstance().startAutomaticCapture("Targeting", 0);
     camera.setFPS(15);
     camera.setResolution(320, 240);
-    SmartDashboard.putNumber("Targets", 0);
+  /*  SmartDashboard.putNumber("Targets", 0);
     SmartDashboard.putNumber("H distance", 0);
     SmartDashboard.putNumber("W distance", 1);
     SmartDashboard.putNumber("V angle", 0);
     SmartDashboard.putNumber("H angle", 0);
-    SmartDashboard.putNumber("Aspect Ratio", 0);
+    SmartDashboard.putNumber("Aspect Ratio", 0); */
 
     // SmartDashboard.putNumber("Angle", 0);
     SmartDashboard.putBoolean("Show HSV", false);
@@ -70,18 +70,29 @@ public class VisionProcess extends Thread {
     double cy = r.tl().y + 0.5 * r.height;
     return new Point(cx, cy);
   }
-  double round10(double x){
-    return Math.round(x * 10+0.5) / 10.0;
+
+  double round10(double x) {
+    return Math.round(x * 10 + 0.5) / 10.0;
   }
+
   public void run() {
     GripPipeline grip = new GripPipeline();
     CvSink cvSink = CameraServer.getInstance().getVideo();
     CvSource outputStream = CameraServer.getInstance().putVideo("Rectangle", 320, 240);
     Mat mat = new Mat();
     ArrayList<Rect> rects = new ArrayList<Rect>();
-    // TODO: use a network tables data structure to pass target params to Robot Program
+    // TODO: use a network tables data structure to pass target params to Robot
+    // Program
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     NetworkTable table = inst.getTable("targetdata");
+    NetworkTableEntry hAngle;
+    NetworkTableEntry vAngle;
+    NetworkTableEntry distance;
+    NetworkTableEntry haveTarget;
+    distance = table.getEntry("tDistance");
+    vAngle = table.getEntry("vAngle");
+    hAngle = table.getEntry("hAngle");
+    haveTarget = table.getEntry("targets");
     while (true) {
       try {
         Thread.sleep(20);
@@ -123,14 +134,21 @@ public class VisionProcess extends Thread {
         double dh = distanceFactorHeight / biggest.height;
         double dw = distanceFactorWidth / biggest.width;
         Point ctr = center(biggest);
-        double hoff=angleFactorWidth*(ctr.x-0.5*imageWidth);
-        double voff=-angleFactorHeight*(ctr.y-0.5*imageHeight); // invert y !
-
-        SmartDashboard.putNumber("H distance", round10(dh));
-        SmartDashboard.putNumber("W distance", round10(dw));
+        double hoff = angleFactorWidth * (ctr.x - 0.5 * imageWidth);
+        double voff = -angleFactorHeight * (ctr.y - 0.5 * imageHeight); // invert y !
+        hAngle.setDouble(hoff);
+        vAngle.setDouble(voff);
+        distance.setDouble(dw);
+        haveTarget.setBoolean(true);
+        // SmartDashboard.putNumber("H distance", round10(dh));
+      /*  SmartDashboard.putNumber("W distance", round10(dw));
         SmartDashboard.putNumber("H angle", round10(hoff));
-        SmartDashboard.putNumber("V angle", round10(voff));
-        SmartDashboard.putNumber("Aspect Ratio", round10((double)(biggest.width)/biggest.height));
+        SmartDashboard.putNumber("V angle", round10(voff)); */
+        // SmartDashboard.putNumber("Aspect Ratio",
+        // round10((double)(biggest.width)/biggest.height));
+
+      } else{
+        haveTarget.setBoolean(false);
       }
       for (int i = 0; i < rects.size(); i++) {
         Rect r = rects.get(i);
