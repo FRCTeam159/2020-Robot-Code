@@ -35,7 +35,11 @@ public class VisionProcess extends Thread {
   public static double distanceToFillHeight = 6.25; // measured distance where target just fills screen (height)
   public static double cameraFovW = 2 * Math.atan(0.5 * targetWidth / distanceToFillWidth); // 41.8 degrees
   public static double cameraFovH = 2 * Math.atan(0.5 * targetHeight / distanceToFillHeight); // 33.0 degrees
-
+  public static double hTarget = 0.0;
+  public static double vTarget = 0.0;
+  public static double hToll = 1.0;
+  public static double vToll = 10.0;
+  public static boolean isAtTarget = false;
   public static double imageWidth = 320;
   public static double imageHeight = 240;
   // multiply these factors by target screen projection (pixels) to get distance
@@ -52,15 +56,18 @@ public class VisionProcess extends Thread {
     camera = CameraServer.getInstance().startAutomaticCapture("Targeting", 0);
     camera.setFPS(15);
     camera.setResolution(320, 240);
-  /*  SmartDashboard.putNumber("Targets", 0);
-    SmartDashboard.putNumber("H distance", 0);
-    SmartDashboard.putNumber("W distance", 1);
+    camera.setBrightness(1);
+    camera.setExposureManual(1);
+    SmartDashboard.putNumber("Targets", 0);
+    //SmartDashboard.putNumber("H distance", 0);
+    SmartDashboard.putNumber("Target distance", 1);
     SmartDashboard.putNumber("V angle", 0);
     SmartDashboard.putNumber("H angle", 0);
-    SmartDashboard.putNumber("Aspect Ratio", 0); */
+    //SmartDashboard.putNumber("Aspect Ratio", 0); 
 
     // SmartDashboard.putNumber("Angle", 0);
     SmartDashboard.putBoolean("Show HSV", false);
+    SmartDashboard.putBoolean("onTarget", false);
     System.out.println("fov H:" + Math.toDegrees(cameraFovH) + " W:" + Math.toDegrees(cameraFovW));
     System.out.println("Expected Target Aspect ratio:" + round10(targetAspectRatio));
   }
@@ -89,10 +96,12 @@ public class VisionProcess extends Thread {
     NetworkTableEntry vAngle;
     NetworkTableEntry distance;
     NetworkTableEntry haveTarget;
+    NetworkTableEntry atTarget;
     distance = table.getEntry("tDistance");
     vAngle = table.getEntry("vAngle");
     hAngle = table.getEntry("hAngle");
     haveTarget = table.getEntry("targets");
+    atTarget = table.getEntry("atTarget");
     while (true) {
       try {
         Thread.sleep(20);
@@ -140,10 +149,19 @@ public class VisionProcess extends Thread {
         vAngle.setDouble(voff);
         distance.setDouble(dw);
         haveTarget.setBoolean(true);
+        atTarget.setBoolean(isAtTarget);
         // SmartDashboard.putNumber("H distance", round10(dh));
-      /*  SmartDashboard.putNumber("W distance", round10(dw));
+        SmartDashboard.putNumber("Target distance", round10(dw));
         SmartDashboard.putNumber("H angle", round10(hoff));
-        SmartDashboard.putNumber("V angle", round10(voff)); */
+        SmartDashboard.putNumber("V angle", round10(voff)); 
+    
+        if(Math.abs(hoff - hTarget) <= hToll && Math.abs(voff - vTarget) <= vToll){
+          isAtTarget = true;
+            SmartDashboard.putBoolean("onTarget", isAtTarget);
+        }else{
+          isAtTarget = false;
+          SmartDashboard.putBoolean("onTarget", isAtTarget);
+        }
         // SmartDashboard.putNumber("Aspect Ratio",
         // round10((double)(biggest.width)/biggest.height));
 
@@ -160,6 +178,9 @@ public class VisionProcess extends Thread {
           Imgproc.rectangle(mat, tl, br, new Scalar(255.0, 255.0, 255.0), 1);
       }
       outputStream.putFrame(mat);
+      camera.setBrightness(1);
+      camera.setExposureManual(1);
+
     }
   }
 }

@@ -17,7 +17,7 @@ public class Shooter extends SubsystemBase {
   public static int motorValue = 0;
   private SparkMotor shootMotor;
   public Shooter() {
-    shootMotor = new SparkMotor(0);
+    //shootMotor = new SparkMotor(0);
   }
 
   @Override
@@ -35,6 +35,6 @@ public class Shooter extends SubsystemBase {
   }
   public void fire(int firespeed){
     //pass in calculated motorvalue needed to fire.
-    shootMotor.set(firespeed);
+    //shootMotor.set(firespeed);
   }
 }

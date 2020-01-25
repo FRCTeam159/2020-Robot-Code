@@ -8,10 +8,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Robot;
 import frc.robot.subsystems.Targeting;
 
 public class TargetingCommands extends CommandBase {
@@ -19,48 +17,35 @@ public class TargetingCommands extends CommandBase {
    * Creates a new TargetingCommands.
    */
   NetworkTable table;
-  private NetworkTableEntry hAngle;
-  private NetworkTableEntry vAngle;
-  private NetworkTableEntry distance;
-  private NetworkTableEntry haveTarget;
   private final Targeting targeting;
-
 
   public TargetingCommands(Targeting tR) {
     targeting = tR;
     addRequirements(tR);
-    NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    table = inst.getTable("targetdata");
-    SmartDashboard.putNumber("Target distance" , 0.0);
-    SmartDashboard.putNumber("H angle" , 0.0);
-    SmartDashboard.putNumber("V angle" , 0.0);
-    SmartDashboard.putBoolean("Targets", false);
-  
-    // Use addRequirements() here to declare subsystem dependencies.
+
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    distance = table.getEntry("tDistance");
-    vAngle = table.getEntry("vAngle");
-    hAngle = table.getEntry("hAngle");
-    haveTarget = table.getEntry("targets");
+
 
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double tdistance = distance.getDouble(0.0);
-    double hoff = hAngle.getDouble(0.0);
-    double voff = vAngle.getDouble(0.0);
-    boolean targets = haveTarget.getBoolean(false);
-    SmartDashboard.putNumber("Target distance", round10(tdistance));
-    SmartDashboard.putNumber("H angle", round10(hoff));
-    SmartDashboard.putNumber("V angle", round10(voff));
-    SmartDashboard.putBoolean("Targets", targets);
-
+     boolean targetButton = Robot.targetButton.get();
+     if(targetButton){
+      targeting.enableAutoTarget();
+      targeting.doAutoAdjust();
+     } else{
+      if(!targetButton){
+        targeting.disableAutoTarget();
+      }
+     }
+ 
+    
   }
 
   // Called once the command ends or is interrupted.
