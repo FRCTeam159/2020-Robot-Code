@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.Constants;
 import frc.robot.OI;
+import frc.robot.RobotContainer;
 
 /**
  * An example command. You can replace me with your own command.
@@ -28,7 +29,7 @@ public class DriveWithGamepad extends CommandBase implements Constants {
   boolean useDeadband = true;
   boolean Debug = false;
   private final DriveTrain driveTrain;
- // Button gearButton = new Button(GEAR_BUTTON);
+  // Button gearButton = new Button(GEAR_BUTTON);
 
   public DriveWithGamepad(DriveTrain dT) {
 
@@ -46,19 +47,17 @@ public class DriveWithGamepad extends CommandBase implements Constants {
   // Called repeatedly when this Command is scheduled to run
   @Override
   public void execute() {
-    //if (!Robot.isTele)
-      //return;
+    // if (!Robot.isTele)
+    // return;
     Joystick stick = OI.stick;
     double zs = -stick.getRawAxis(LEFT_JOYSTICK);
     double xs = stick.getRawAxis(RIGHT_JOYSTICK);
     double z = zs;
     double x = xs;
-   /* if (gearButton.isPressed()) {
-      if (Robot.drivetrain.inLowGear())
-        Robot.drivetrain.setHighGear();
-      else
-        Robot.drivetrain.setLowGear();
-    }*/
+    /*
+     * if (gearButton.isPressed()) { if (Robot.drivetrain.inLowGear())
+     * Robot.drivetrain.setHighGear(); else Robot.drivetrain.setLowGear(); }
+     */
     if (useDeadband) {
       z = quadDeadband(zMinT, zMinO, zs);
       x = quadDeadband(xMinT, xMinO, xs);
@@ -80,7 +79,9 @@ public class DriveWithGamepad extends CommandBase implements Constants {
     }
 
     turnValue *= Math.abs(moveValue) * (1 - turnScale) + turnScale;
-  driveTrain.arcadeDrive(moveValue, turnValue);
+    if (!RobotContainer.targeting.isTargeting()) {
+      driveTrain.arcadeDrive(moveValue, turnValue);
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()

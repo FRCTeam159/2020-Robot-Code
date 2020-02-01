@@ -28,7 +28,7 @@ import frc.robot.subsystems.GripPipeline;
  * Add your docs here.
  */
 public class VisionProcess extends Thread {
-  static UsbCamera camera;
+  // static UsbCamera camera1;
   public static double targetWidth = 21.0; // physical width of target (inches)
   public static double targetHeight = 4.0; // physical height of target (inches)
   public static double distanceToFillWidth = 27.0; // measured distance where target just fills screen (width)
@@ -37,8 +37,8 @@ public class VisionProcess extends Thread {
   public static double cameraFovH = 2 * Math.atan(0.5 * targetHeight / distanceToFillHeight); // 33.0 degrees
   public static double hTarget = 0.0;
   public static double vTarget = 0.0;
-  public static double hToll = 1.0;
-  public static double vToll = 10.0;
+  // public static double hToll = 1.0;
+  // public static double vToll = 10.0;
   public static boolean isAtTarget = false;
   public static double imageWidth = 320;
   public static double imageHeight = 240;
@@ -53,21 +53,22 @@ public class VisionProcess extends Thread {
   double targetAspectRatio = targetWidth / targetHeight;
 
   public void init() {
-    camera = CameraServer.getInstance().startAutomaticCapture("Targeting", 0);
-    camera.setFPS(15);
-    camera.setResolution(320, 240);
-    camera.setBrightness(1);
-    camera.setExposureManual(1);
+    // camera1 = CameraServer.getInstance().startAutomaticCapture("Targeting", 0);
+    // camera1.setFPS(15);
+    // camera1.setResolution(320, 240);
+    // camera1.setBrightness(1);
+    // camera1.setExposureManual(1);
     SmartDashboard.putNumber("Targets", 0);
-    //SmartDashboard.putNumber("H distance", 0);
+    // SmartDashboard.putNumber("H distance", 0);
     SmartDashboard.putNumber("Target distance", 1);
     SmartDashboard.putNumber("V angle", 0);
     SmartDashboard.putNumber("H angle", 0);
-    //SmartDashboard.putNumber("Aspect Ratio", 0); 
+    // SmartDashboard.putNumber("Aspect Ratio", 0);
 
     // SmartDashboard.putNumber("Angle", 0);
     SmartDashboard.putBoolean("Show HSV", false);
     SmartDashboard.putBoolean("onTarget", false);
+    SmartDashboard.putBoolean("autotarget", false);
     System.out.println("fov H:" + Math.toDegrees(cameraFovH) + " W:" + Math.toDegrees(cameraFovW));
     System.out.println("Expected Target Aspect ratio:" + round10(targetAspectRatio));
   }
@@ -84,7 +85,7 @@ public class VisionProcess extends Thread {
 
   public void run() {
     GripPipeline grip = new GripPipeline();
-    CvSink cvSink = CameraServer.getInstance().getVideo();
+    CvSink cvSink = CameraServer.getInstance().getVideo(Cameras.camera1);
     CvSource outputStream = CameraServer.getInstance().putVideo("Rectangle", 320, 240);
     Mat mat = new Mat();
     ArrayList<Rect> rects = new ArrayList<Rect>();
@@ -97,24 +98,47 @@ public class VisionProcess extends Thread {
     NetworkTableEntry distance;
     NetworkTableEntry haveTarget;
     NetworkTableEntry atTarget;
+    NetworkTableEntry autotarget;
+
     distance = table.getEntry("tDistance");
     vAngle = table.getEntry("vAngle");
     hAngle = table.getEntry("hAngle");
     haveTarget = table.getEntry("targets");
     atTarget = table.getEntry("atTarget");
+    autotarget = table.getEntry("autotarget");
+
     while (true) {
       try {
         Thread.sleep(20);
       } catch (InterruptedException ex) {
         System.out.println("exception)");
       }
+      autotarget = table.getEntry("autotarget");
+      // frontCamera = table.getEntry("frontcamera");
+      // boolean targetcam=frontCamera.getBoolean(true);
+  
+      if(!autotarget.getBoolean(false)){
+        isAtTarget = false;
+        haveTarget.setBoolean(false);
+        atTarget.setBoolean(false);
+        SmartDashboard.putBoolean("onTarget", isAtTarget);
+        SmartDashboard.putNumber("Targets",0);
+      //  continue; 
+      } 
+      cvSink = CameraServer.getInstance().getVideo();
       if (cvSink.grabFrame(mat) == 0) {
         // Send the output the error.
         outputStream.notifyError(cvSink.getError());
         // skip the rest of the current iteration
         continue;
       }
-
+      
+      
+      /*
+       * autotarget = table.getEntry("autotarget");
+       * 
+       * 
+       */
       grip.process(mat);
       Boolean show_hsv = SmartDashboard.getBoolean("Show HSV", false);
       if (show_hsv) {
@@ -153,19 +177,19 @@ public class VisionProcess extends Thread {
         // SmartDashboard.putNumber("H distance", round10(dh));
         SmartDashboard.putNumber("Target distance", round10(dw));
         SmartDashboard.putNumber("H angle", round10(hoff));
-        SmartDashboard.putNumber("V angle", round10(voff)); 
-    
-        if(Math.abs(hoff - hTarget) <= hToll && Math.abs(voff - vTarget) <= vToll){
+        SmartDashboard.putNumber("V angle", round10(voff));
+
+        if (Math.abs(hoff - hTarget) <= Targeting.hToll && Math.abs(voff - vTarget) <= Targeting.vToll) {
           isAtTarget = true;
-            SmartDashboard.putBoolean("onTarget", isAtTarget);
-        }else{
+          SmartDashboard.putBoolean("onTarget", isAtTarget);
+        } else {
           isAtTarget = false;
           SmartDashboard.putBoolean("onTarget", isAtTarget);
         }
         // SmartDashboard.putNumber("Aspect Ratio",
         // round10((double)(biggest.width)/biggest.height));
 
-      } else{
+      } else {
         haveTarget.setBoolean(false);
       }
       for (int i = 0; i < rects.size(); i++) {
@@ -178,8 +202,6 @@ public class VisionProcess extends Thread {
           Imgproc.rectangle(mat, tl, br, new Scalar(255.0, 255.0, 255.0), 1);
       }
       outputStream.putFrame(mat);
-      camera.setBrightness(1);
-      camera.setExposureManual(1);
 
     }
   }

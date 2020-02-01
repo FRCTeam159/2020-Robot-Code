@@ -22,7 +22,12 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-  public static JoystickButton targetButton; 
+  public static JoystickButton targetButton;
+  public static JoystickButton cameraButton; 
+  public static JoystickButton colorDeployButton;
+  public static JoystickButton colorRotationButton;
+  public static JoystickButton colorMatchButton;
+
   public static boolean isAuto;
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -33,6 +38,11 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     targetButton = new JoystickButton(OI.stick, Constants.Y_BUTTON);
+    cameraButton = new JoystickButton(OI.stick, Constants.A_BUTTON);
+    colorDeployButton = new JoystickButton(OI.stick, Constants.LEFT_BUMPER_BUTTON);
+    colorRotationButton = new JoystickButton(OI.stick, Constants.B_BUTTON);
+    colorMatchButton = new JoystickButton(OI.stick, Constants.X_BUTTON);
+
     m_robotContainer = new RobotContainer();
   }
 

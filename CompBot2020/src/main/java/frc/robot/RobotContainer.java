@@ -33,11 +33,12 @@ public class RobotContainer {
   private final ClimberCommands climberCommands = new ClimberCommands(climber);
   private final ColorWheel colorWheel = new ColorWheel();
   private final ColorWheelCommands colorWheelCommands = new ColorWheelCommands(colorWheel);
+  public static final Cameras cameras = new Cameras();
+  private final CameraCommands cameraCommands =  new CameraCommands(cameras);
   public static final Targeting targeting = new Targeting();
   private final TargetingCommands targetingCommands =  new TargetingCommands(targeting);
+
   private final VisionProcess vision = new VisionProcess();
-
-
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -52,6 +53,7 @@ public class RobotContainer {
     colorWheel.setDefaultCommand(colorWheelCommands);
     intake.setDefaultCommand(intakeCommands);
     climber.setDefaultCommand(climberCommands);
+    cameras.setDefaultCommand(cameraCommands);
     configureButtonBindings();
   }
 

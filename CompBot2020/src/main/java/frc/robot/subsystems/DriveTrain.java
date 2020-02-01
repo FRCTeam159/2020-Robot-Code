@@ -61,7 +61,8 @@ public class DriveTrain extends SubsystemBase implements Constants {
 	public void arcadeDrive(double moveValue, double turnValue) {
 		double leftMotorOutput;
 		double rightMotorOutput;
-	
+		//System.out.println("M:"+moveValue+" T:"+turnValue);
+
 		if (moveValue > 0.0) {
 			if (turnValue > 0.0) {
 				leftMotorOutput = Math.max(moveValue, turnValue);

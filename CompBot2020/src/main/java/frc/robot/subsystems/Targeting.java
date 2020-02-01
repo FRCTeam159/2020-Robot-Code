@@ -22,8 +22,16 @@ public class Targeting extends SubsystemBase {
   private NetworkTableEntry distance;
   private NetworkTableEntry haveTarget;
   private NetworkTableEntry atTarget;
+  private NetworkTableEntry autotarget;
+
+  public static double hToll = 1.5;
+  public static double vToll = 1.5;
+  public static double hVMax = 1.0;
+  public static double vVMax = 1.0;
+
   NetworkTable table;
   public static boolean autoEnabled = false;
+  Cameras cams;
 
   /**
    * Creates a new Targeting.
@@ -38,8 +46,9 @@ public class Targeting extends SubsystemBase {
     hAngle = table.getEntry("hAngle");
     haveTarget = table.getEntry("targets");
     atTarget = table.getEntry("atTarget");
+    autotarget = table.getEntry("autotarget");
     adjustH = new AdjustH();
-    SmartDashboard.putNumber("targeting", 0.0);
+    // SmartDashboard.putNumber("autotarget", 0.0);
   }
 
   @Override
@@ -55,12 +64,17 @@ public class Targeting extends SubsystemBase {
     if (!(autoEnabled)) {
       adjustH.enable();
       autoEnabled = true;
+      autotarget.setBoolean(autoEnabled);
+      SmartDashboard.putBoolean("autotarget", autoEnabled);
     }
   }
 
   public void disableAutoTarget() {
     adjustH.disable();
     autoEnabled = false;
+    autotarget.setBoolean(autoEnabled);
+    SmartDashboard.putBoolean("autotarget", autoEnabled);
+
   }
 
   public boolean isTargeting() {
@@ -68,11 +82,17 @@ public class Targeting extends SubsystemBase {
   }
 
   public void doAutoAdjust() {
+    //if(!onTarget()){
     adjustH.calculate();
+    //}
   }
 
   public boolean onTarget() {
-    return adjustH.atSetpoint();
+    if (haveTarget.getBoolean(false)) {
+      return adjustH.atSetpoint();
+    } else {
+      return false;
+    }
   }
 
   protected class AdjustH extends PIDController {
@@ -82,24 +102,23 @@ public class Targeting extends SubsystemBase {
 
     public AdjustH() {
       super(kP, kI, kD, .02);
-      setTolerance(0.5, 1);
+      setTolerance(hToll, hVMax);
       setSetpoint(0.0);
     }
 
     public void enable() {
-      //System.out.println("enable auto");
+      // System.out.println("enable auto");
       enableContinuousInput(-30, 30);
     }
 
     public void disable() {
-      //.println("disable auto");
+      // .println("disable auto");
       disableContinuousInput();
     }
 
     public void calculate() {
       double hoff = hAngle.getDouble(0.0);
       double output = super.calculate(hoff);
-      SmartDashboard.putNumber("targeting", output);
       RobotContainer.driveTrain.arcadeDrive(0, -output);
     }
   }

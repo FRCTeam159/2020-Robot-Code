@@ -7,53 +7,44 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
-import frc.robot.subsystems.Targeting;
+import frc.robot.RobotContainer;
 
-public class TargetingCommands extends CommandBase {
+public class AdjustTarget extends CommandBase {
   /**
-   * Creates a new TargetingCommands.
+   * Creates a new AdjustTarget.
    */
-  NetworkTable table;
-  private final Targeting targeting;
-
-  public TargetingCommands(Targeting tR) {
-    targeting = tR;
-    addRequirements(tR);
-
+  
+  public AdjustTarget() {
+    System.out.println("AdjustTarget.Constructor");
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.targeting);
+    addRequirements(RobotContainer.driveTrain);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    System.out.println("AdjustTarget.initialize");
+    RobotContainer.targeting.enableAutoTarget();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    boolean targetButton = Robot.targetButton.get();
-    if (targetButton) {
-      targeting.enableAutoTarget();
-      targeting.doAutoAdjust();
-    } else
-      targeting.disableAutoTarget();
+    RobotContainer.targeting.doAutoAdjust();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    System.out.println("AdjustTarget.end:"+interrupted);
+    RobotContainer.targeting.disableAutoTarget();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
-  }
-
-  double round10(double x) {
-    return Math.round(x * 10 + 0.5) / 10.0;
+    return RobotContainer.targeting.onTarget();
   }
 }

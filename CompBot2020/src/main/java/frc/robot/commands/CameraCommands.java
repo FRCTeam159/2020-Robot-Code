@@ -7,40 +7,48 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
-import frc.robot.subsystems.Targeting;
+import frc.robot.subsystems.Cameras;
 
-public class TargetingCommands extends CommandBase {
+public class CameraCommands extends CommandBase {
   /**
-   * Creates a new TargetingCommands.
+   * Creates a new CameraCommands.
    */
-  NetworkTable table;
-  private final Targeting targeting;
+  Cameras cams;
+  boolean prevTrigger = false;
 
-  public TargetingCommands(Targeting tR) {
-    targeting = tR;
-    addRequirements(tR);
-
+  public CameraCommands(Cameras c) {
+    cams = c;
+    addRequirements(c);
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    boolean targetButton = Robot.targetButton.get();
-    if (targetButton) {
-      targeting.enableAutoTarget();
-      targeting.doAutoAdjust();
-    } else
-      targeting.disableAutoTarget();
+    boolean cameraButton = Robot.cameraButton.get();
+    cams.setBrightness();
+    if (cameraButton && !prevTrigger) {
+      if(Cameras.isFront()){
+        System.out.println("Setting back camera");
+        cams.setBack();
+      } else{
+        System.out.println("Setting front camera");
+        cams.setFront();
+      }
+      prevTrigger = true;
+    } else if(prevTrigger && !cameraButton){
+      prevTrigger = false;
+    }
+    //cams.writeVideo();
   }
+  
 
   // Called once the command ends or is interrupted.
   @Override
@@ -51,9 +59,5 @@ public class TargetingCommands extends CommandBase {
   @Override
   public boolean isFinished() {
     return false;
-  }
-
-  double round10(double x) {
-    return Math.round(x * 10 + 0.5) / 10.0;
   }
 }
