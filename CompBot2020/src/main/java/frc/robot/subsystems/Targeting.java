@@ -31,12 +31,22 @@ public class Targeting extends SubsystemBase {
 
   NetworkTable table;
   public static boolean autoEnabled = false;
+  public static boolean zeroFound = false;
+  public static boolean centerFound = false;
+  public static boolean targetingDone = false;
   Cameras cams;
+
+  public enum states {
+    WAITING, FINDINGCENTER, FINDINGOFFSET, ONTARGET
+  };
+
+  public states state = states.WAITING;
 
   /**
    * Creates a new Targeting.
    */
   AdjustH adjustH;
+  AdjustV adjustV;
 
   public Targeting() {
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -48,32 +58,92 @@ public class Targeting extends SubsystemBase {
     atTarget = table.getEntry("atTarget");
     autotarget = table.getEntry("autotarget");
     adjustH = new AdjustH();
+    adjustV = new AdjustV();
     // SmartDashboard.putNumber("autotarget", 0.0);
   }
 
   @Override
   public void periodic() {
-    if (autoEnabled) {
-      doAutoAdjust();
-    }
+
+    // if (autoEnabled) {
+    // goToState();
+    // }
     // This method will be called once per scheduler run
-    SmartDashboard.putBoolean("Y button", Robot.targetButton.get());
+  }
+
+  public boolean findZero() {
+    if (!RobotContainer.shooter.isAtBottom() && !zeroFound) {
+      RobotContainer.shooter.changeShootAngle(-0.1);
+      zeroFound = false;
+    } else {
+      RobotContainer.shooter.changeShootAngle(0.0);
+      RobotContainer.shooter.zeroMotor();
+      zeroFound = true;
+
+    }
+    return zeroFound;
+  }
+
+  public void goToState() {
+    switch (state) {
+    default:
+    case WAITING:
+      centerFound = false;
+      targetingDone = false;
+      autoEnabled = false;
+      break;
+    case FINDINGCENTER:
+      System.out.println("we are on target: " + onTarget());
+      if (!centerFound) {
+        // adjustV.enable();
+        // adjustH.enable();
+        doAutoAdjust();
+      } else {
+        centerFound = true;
+        state = states.FINDINGOFFSET;
+      }
+      break;
+    case FINDINGOFFSET:
+      state = states.ONTARGET;
+      break;
+    case ONTARGET:
+       targetingDone = true;
+      state = states.WAITING;
+      break;
+    }
+    log();
+  }
+
+  public boolean isTargetingDone() {
+    return targetingDone;
   }
 
   public void enableAutoTarget() {
-    if (!(autoEnabled)) {
-      adjustH.enable();
+    //if (!autoEnabled) {
+      targetingDone = false;
+      centerFound=false;
       autoEnabled = true;
       autotarget.setBoolean(autoEnabled);
-      SmartDashboard.putBoolean("autotarget", autoEnabled);
-    }
+      state = states.FINDINGCENTER;
+      adjustV.enable();
+      adjustH.enable();
+    //}
+    log();
+  }
+
+  public void log() {
+    SmartDashboard.putBoolean("autotarget", autoEnabled);
+    SmartDashboard.putBoolean("is Targeting Finished", targetingDone);
   }
 
   public void disableAutoTarget() {
+    state = states.WAITING;
+    adjustV.disable();
     adjustH.disable();
+    targetingDone = false;
     autoEnabled = false;
     autotarget.setBoolean(autoEnabled);
-    SmartDashboard.putBoolean("autotarget", autoEnabled);
+    log();
 
   }
 
@@ -82,14 +152,22 @@ public class Targeting extends SubsystemBase {
   }
 
   public void doAutoAdjust() {
-    //if(!onTarget()){
-    adjustH.calculate();
-    //}
+    if (haveTarget.getBoolean(false)) {
+      adjustH.calculate();
+      adjustV.calculate();
+      if(onTarget()){
+        centerFound = true;
+      }
+    }
   }
 
   public boolean onTarget() {
     if (haveTarget.getBoolean(false)) {
-      return adjustH.atSetpoint();
+      boolean ht=adjustH.atSetpoint();
+      boolean vt=adjustV.atSetpoint();
+      System.out.println("ht = " +  ht + " vt = " + vt);
+      
+      return ( ht  && vt);
     } else {
       return false;
     }
@@ -97,7 +175,7 @@ public class Targeting extends SubsystemBase {
 
   protected class AdjustH extends PIDController {
     static final double kP = 0.01;
-    static final double kI = 0.0;
+    static final double kI = 0.0001;
     static final double kD = 0.0;
 
     public AdjustH() {
@@ -117,9 +195,36 @@ public class Targeting extends SubsystemBase {
     }
 
     public void calculate() {
-      double hoff = hAngle.getDouble(0.0);
-      double output = super.calculate(hoff);
+      double hOff = hAngle.getDouble(0.0);
+      double output = super.calculate(hOff);
+      System.out.println("output is" + output);
       RobotContainer.driveTrain.arcadeDrive(0, -output);
+    }
+  }
+
+  protected class AdjustV extends PIDController {
+    static final double vP = 0.01;
+    static final double vI = 0.0;
+    static final double vD = 0.0;
+
+    public AdjustV() {
+      super(vP, vI, vD, 0.02);
+      setTolerance(vToll, vVMax);
+      setSetpoint(0.0);
+    }
+
+    public void calculate() {
+      double vOff = vAngle.getDouble(0.0);
+      double output = super.calculate(vOff);
+      RobotContainer.shooter.changeShootAngle(output);
+    }
+
+    public void disable() {
+      disableContinuousInput();
+    }
+
+    public void enable() {
+      enableContinuousInput(-30, 30);
     }
   }
 }

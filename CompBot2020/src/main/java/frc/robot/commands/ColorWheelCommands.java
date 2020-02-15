@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.subsystems.ColorWheel;
 
@@ -17,6 +18,7 @@ public class ColorWheelCommands extends CommandBase {
   /**
    * Creates a new ColorWheelCommands.
    */
+  public boolean lastState = false;
   private final ColorWheel colorWheel;
   public ColorWheelCommands(ColorWheel cW) {
     colorWheel = cW;
@@ -33,11 +35,32 @@ public class ColorWheelCommands extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    boolean deployButton = Robot.colorDeployButton.get(); //Left Bumper
+    int direction = OI.stick.getPOV(0);
+   /* boolean deployButton = Robot.colorDeployButton.get(); //Left Bumper
     boolean rotationButton = Robot.colorRotationButton.get(); //B button
-    boolean matchButton = Robot.colorMatchButton.get(); //X button
-    boolean lastState = false;
-    if(deployButton && !lastState){
+    boolean matchButton = Robot.colorMatchButton.get(); //X button*/
+      switch (direction){
+        case 0:
+        if(!colorWheel.isDeployed()){
+          colorWheel.deploy();}
+        break;
+        case 90:
+        if(colorWheel.isDeployed()){
+          colorWheel.doRotations();
+        }
+        break;
+        case 180:
+        if(colorWheel.isDeployed()){
+          colorWheel.disableColor();
+        }
+        break;
+        case 270:
+        if(colorWheel.isDeployed()){
+        colorWheel.doColor();
+        }
+        break;
+      }
+   /* if(deployButton && !lastState){
       if(!colorWheel.isDeployed()){
         colorWheel.deploy();
       } else{
@@ -52,7 +75,7 @@ public class ColorWheelCommands extends CommandBase {
     }
     if(matchButton && colorWheel.isDeployed()){
       colorWheel.doColor();
-    }
+    }*/
     SmartDashboard.putString("ColorWheel", String.valueOf(colorWheel.getcolorChar()));
     colorWheel.goToState();
   } 

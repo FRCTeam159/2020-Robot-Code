@@ -9,12 +9,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.Cameras;
 
 public class AdjustTarget extends CommandBase {
   /**
    * Creates a new AdjustTarget.
    */
-  
+
   public AdjustTarget() {
     System.out.println("AdjustTarget.Constructor");
     // Use addRequirements() here to declare subsystem dependencies.
@@ -26,25 +27,30 @@ public class AdjustTarget extends CommandBase {
   @Override
   public void initialize() {
     System.out.println("AdjustTarget.initialize");
+    Cameras.camera1.setBrightness(1);
+    Cameras.camera1.setExposureManual(1);
     RobotContainer.targeting.enableAutoTarget();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.targeting.doAutoAdjust();
+    Cameras.camera1.setBrightness(1);
+    Cameras.camera1.setExposureManual(1);
+      RobotContainer.targeting.goToState();
+    // RobotContainer.cameras.setBrightness();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    System.out.println("AdjustTarget.end:"+interrupted);
+    System.out.println("AdjustTarget.end:" + interrupted);
     RobotContainer.targeting.disableAutoTarget();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return RobotContainer.targeting.onTarget();
+    return RobotContainer.targeting.isTargetingDone();
   }
 }

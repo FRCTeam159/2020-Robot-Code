@@ -73,7 +73,7 @@ public class Cameras extends SubsystemBase {
       Cameras.camera1.setExposureManual(1);
     } else {
       Cameras.camera1.setBrightness(50);
-      Cameras.camera1.setExposureManual(10);
+      Cameras.camera1.setExposureManual(3);
     }
   }
   /*

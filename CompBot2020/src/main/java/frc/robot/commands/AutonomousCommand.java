@@ -19,6 +19,10 @@ public class AutonomousCommand extends SequentialCommandGroup {
   public AutonomousCommand() {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super(new AdjustTarget());
+    super(
+      new FindZero()
+      //,
+     // new AdjustTarget()
+     );
   }
 }

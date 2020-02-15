@@ -22,6 +22,9 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
+
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.GripPipeline;
 
 /**
@@ -29,7 +32,7 @@ import frc.robot.subsystems.GripPipeline;
  */
 public class VisionProcess extends Thread {
   // static UsbCamera camera1;
-  public static double targetWidth = 21.0; // physical width of target (inches)
+  public static double targetWidth = 34.0; // physical width of target (inches)
   public static double targetHeight = 4.0; // physical height of target (inches)
   public static double distanceToFillWidth = 27.0; // measured distance where target just fills screen (width)
   public static double distanceToFillHeight = 6.25; // measured distance where target just fills screen (height)
@@ -42,6 +45,7 @@ public class VisionProcess extends Thread {
   public static boolean isAtTarget = false;
   public static double imageWidth = 320;
   public static double imageHeight = 240;
+  public double xOff;
   // multiply these factors by target screen projection (pixels) to get distance
   double distanceFactorWidth = 0.5 * targetWidth * imageWidth / Math.tan(cameraFovW / 2.0);
   double distanceFactorHeight = 0.5 * targetHeight * imageHeight / Math.tan(cameraFovH / 2.0);
@@ -51,6 +55,14 @@ public class VisionProcess extends Thread {
   double angleFactorHeight = Math.toDegrees(cameraFovH) / imageHeight;
   // expected width/height ratio
   double targetAspectRatio = targetWidth / targetHeight;
+  NetworkTableInstance inst = NetworkTableInstance.getDefault();
+  NetworkTable table = inst.getTable("targetdata");
+  NetworkTableEntry hAngle;
+  NetworkTableEntry vAngle;
+  NetworkTableEntry distance;
+  NetworkTableEntry haveTarget;
+  NetworkTableEntry atTarget;
+  NetworkTableEntry autotarget;
 
   public void init() {
     // camera1 = CameraServer.getInstance().startAutomaticCapture("Targeting", 0);
@@ -83,6 +95,28 @@ public class VisionProcess extends Thread {
     return Math.round(x * 10 + 0.5) / 10.0;
   }
 
+  public double horizontalTweek(){
+    double a = 10.5/19.9; // fractional Max xOff given maOff
+     xOff  = -a*(RobotContainer.driveTrain.getHeading());
+    xOff = Robot.coerce(-10.5, 10.5, xOff);
+    double aOff = angleFactorWidth*xOff;
+    return aOff;
+  }
+  public double verticalTweek(){
+    return 0.0;
+  }
+  public void log(){
+    SmartDashboard.putNumber("xOff", xOff);
+    double hoff = hAngle.getDouble(0);
+    double dw = distance.getDouble(0);
+    double voff = vAngle.getDouble(0);
+
+    SmartDashboard.putNumber("Target distance", round10(dw));
+    SmartDashboard.putNumber("H angle", round10(hoff));
+    SmartDashboard.putNumber("V angle", round10(voff));
+    SmartDashboard.putBoolean("onTarget", isAtTarget);
+  }
+
   public void run() {
     GripPipeline grip = new GripPipeline();
     CvSink cvSink = CameraServer.getInstance().getVideo(Cameras.camera1);
@@ -91,14 +125,7 @@ public class VisionProcess extends Thread {
     ArrayList<Rect> rects = new ArrayList<Rect>();
     // TODO: use a network tables data structure to pass target params to Robot
     // Program
-    NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    NetworkTable table = inst.getTable("targetdata");
-    NetworkTableEntry hAngle;
-    NetworkTableEntry vAngle;
-    NetworkTableEntry distance;
-    NetworkTableEntry haveTarget;
-    NetworkTableEntry atTarget;
-    NetworkTableEntry autotarget;
+
 
     distance = table.getEntry("tDistance");
     vAngle = table.getEntry("vAngle");
@@ -168,6 +195,7 @@ public class VisionProcess extends Thread {
         double dw = distanceFactorWidth / biggest.width;
         Point ctr = center(biggest);
         double hoff = angleFactorWidth * (ctr.x - 0.5 * imageWidth);
+        hoff += horizontalTweek();
         double voff = -angleFactorHeight * (ctr.y - 0.5 * imageHeight); // invert y !
         hAngle.setDouble(hoff);
         vAngle.setDouble(voff);
@@ -175,17 +203,19 @@ public class VisionProcess extends Thread {
         haveTarget.setBoolean(true);
         atTarget.setBoolean(isAtTarget);
         // SmartDashboard.putNumber("H distance", round10(dh));
-        SmartDashboard.putNumber("Target distance", round10(dw));
-        SmartDashboard.putNumber("H angle", round10(hoff));
-        SmartDashboard.putNumber("V angle", round10(voff));
+
 
         if (Math.abs(hoff - hTarget) <= Targeting.hToll && Math.abs(voff - vTarget) <= Targeting.vToll) {
           isAtTarget = true;
-          SmartDashboard.putBoolean("onTarget", isAtTarget);
         } else {
           isAtTarget = false;
-          SmartDashboard.putBoolean("onTarget", isAtTarget);
         }
+        hAngle.setDouble(hoff);
+        vAngle.setDouble(voff);
+        distance.setDouble(dw);
+        haveTarget.setBoolean(true);
+        atTarget.setBoolean(isAtTarget);
+        log();
         // SmartDashboard.putNumber("Aspect Ratio",
         // round10((double)(biggest.width)/biggest.height));
 
@@ -196,11 +226,17 @@ public class VisionProcess extends Thread {
         Rect r = rects.get(i);
         Point tl = r.tl();
         Point br = r.br();
-        if (r == biggest)
+        double width  = br.x - tl.x;
+        double xVal = tl.x + 0.5*(width);
+        double xTweek = (xOff * width)/targetWidth;
+        Point xPoint = new Point(xVal + xTweek, tl.y);
+        if (r == biggest){
           Imgproc.rectangle(mat, tl, br, new Scalar(255.0, 255.0, 0.0), 2);
-        else
+          Imgproc.drawMarker(mat, xPoint, new Scalar(0, 0 , 255), Imgproc.MARKER_CROSS, 35 , 2 , 8);
+        }else
           Imgproc.rectangle(mat, tl, br, new Scalar(255.0, 255.0, 255.0), 1);
       }
+      
       outputStream.putFrame(mat);
 
     }

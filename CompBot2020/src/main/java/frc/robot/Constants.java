@@ -25,9 +25,16 @@ public interface Constants {
   public static final int FRONT_RIGHT = 2;
   public static final int BACK_RIGHT = 1;
 
+  public static final int COLOR_MOTOR = 5;
+  public static final int LAUNCH_MOTOR = 5;
+  public static final int FEED_MOTOR = 5;
+  public static final int ANGLE_MOTOR = 5;
+  public static final int SHOOT_MOTOR = 5;
   // Piston IDs
   public static final int GEAR_SHIFTER_FORWARD = 0;
   public static final int GEAR_SHIFTER_REVERSE = 1;
+  public static final int COLOR_PISTON_FORWARD = 2;
+  public static final int COLOR_PISTON_REVERSE = 3;
 
   // Servo IDs
   public static final int ARM_SERVO = 0;
@@ -55,6 +62,7 @@ public interface Constants {
   public static final int ENCODER_TIMEOUT = 10;
   public static final int ENCODER_WINDOW_SIZE = 4;
   public static final int ENCODER_STATUS_FRAME_PERIOD = 4;
+  public static final int SHOOTER_ENCODER_RATIO = 10; //10:1 gear ratio
 
   public static final int LEFT_POSITION = 0;
   public static final int CENTER_POSITION = 1;

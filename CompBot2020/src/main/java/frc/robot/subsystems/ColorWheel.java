@@ -8,16 +8,18 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import edu.wpi.first.wpilibj.util.Color;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorMatch;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class ColorWheel extends SubsystemBase {
+public class ColorWheel extends SubsystemBase implements Constants {
   /**
    * Creates a new ColorWheel.
    */
@@ -31,6 +33,11 @@ public class ColorWheel extends SubsystemBase {
   public int lastColor = 6;
   public int colorCount = 0;
   public int targetCount = 26;
+  public boolean atColorTarget = false;
+  public SparkMotor colorMotor;
+  public double colorSpeed = 0.1;
+  public double rotateSpeed = 0.1;
+  //private DoubleSolenoid colorPneumatic = new DoubleSolenoid(COLOR_PISTON_FORWARD, COLOR_PISTON_REVERSE);
 
   // TODO add rotation constant for motor fudge factor
 
@@ -41,9 +48,7 @@ public class ColorWheel extends SubsystemBase {
   State state = State.DISABLED;
 
   public ColorWheel() {
-    SmartDashboard.putBoolean("atColorTarget", false);
-    SmartDashboard.putNumber("Count", 0);
-
+   // colorMotor = new SparkMotor(Constants.COLOR_MOTOR);
   }
 
   @Override
@@ -60,15 +65,21 @@ public class ColorWheel extends SubsystemBase {
 
     switch (state) {
     case DISABLED:
+    //colorMotor.set(0);
+      log();
+      colorCount = 0;
       break;
     case DEPLOYED:
-
+    //colorMotor.set(0);
+      log();
+      colorCount = 0;
       break;
     case GOINGTOROTATIONS:
+    //colorMotor.set(rotateSpeed);
       if (currentColor != lastColor) {
         lastColor = currentColor;
         colorCount++;
-        SmartDashboard.putNumber("Count", colorCount);
+        log();
         if (colorCount == targetCount) {
           state = State.ATROTATIONS;
         }
@@ -76,6 +87,7 @@ public class ColorWheel extends SubsystemBase {
 
       break;
     case GOINGTOCOLOR:
+    //colorMotor.set(colorSpeed);
       if (currentColor == targetIndex) {
         // System.out.println("COLOR MATCHED!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         // TODO add rotation offset for wedge centering.
@@ -83,12 +95,14 @@ public class ColorWheel extends SubsystemBase {
       }
       break;
     case ATCOLOR:
-    SmartDashboard.putBoolean("atColorTarget", true);
+      atColorTarget = true;
+      log();
       state = State.DEPLOYED;
 
       break;
     case ATROTATIONS:
-    SmartDashboard.putBoolean("atColorTarget", true);
+      atColorTarget = true;
+      log();
       state = State.DEPLOYED;
       break;
 
@@ -96,14 +110,20 @@ public class ColorWheel extends SubsystemBase {
   }
 
   public void deploy() {
-    SmartDashboard.putBoolean("atColorTarget", false);
+    atColorTarget = false;
     state = State.DEPLOYED;
     deployed = true;
+    tiltColor(true);
+    log();
+
   }
 
   public void disableColor() {
+
     state = State.DISABLED;
     deployed = false;
+    tiltColor(false);
+    log();
   }
 
   public boolean isDeployed() {
@@ -122,6 +142,22 @@ public class ColorWheel extends SubsystemBase {
       initialIndex = matchColor.getColorIndex(getcolorChar());
       targetIndex = matchColor.getTargetIndex();
       state = State.GOINGTOCOLOR;
+    }
+  }
+
+  public void log() {
+    SmartDashboard.putBoolean("Colordeployed", isDeployed());
+    SmartDashboard.putBoolean("atColorTarget", atColorTarget);
+    SmartDashboard.putNumber("Count", colorCount);
+  }
+  public void tiltColor(boolean forward) {
+    if (forward) {
+       // colorPneumatic.set(DoubleSolenoid.Value.kForward);
+        deployed = true;
+
+    } else {
+       // colorPneumatic.set(DoubleSolenoid.Value.kReverse);
+        deployed = false;
     }
   }
 

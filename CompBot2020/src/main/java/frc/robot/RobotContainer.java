@@ -25,7 +25,7 @@ public class RobotContainer {
 
   public static final DriveTrain driveTrain = new DriveTrain();
   private final DriveWithGamepad driveWithGamepad = new DriveWithGamepad(driveTrain);
-  private final Shooter shooter = new Shooter();
+  public static final Shooter shooter = new Shooter();
   private final ShooterCommands shooterCommands = new ShooterCommands(shooter);
   private final Intake intake = new Intake();
   private final IntakeCommands intakeCommands = new IntakeCommands(intake);

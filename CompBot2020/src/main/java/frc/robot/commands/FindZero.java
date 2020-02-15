@@ -7,39 +7,26 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
-import frc.robot.subsystems.Targeting;
+import frc.robot.RobotContainer;
 
-public class TargetingCommands extends CommandBase {
+public class FindZero extends CommandBase {
   /**
-   * Creates a new TargetingCommands.
+   * Creates a new FindZero.
    */
-  NetworkTable table;
-  private final Targeting targeting;
-
-  public TargetingCommands(Targeting tR) {
-    targeting = tR;
-    addRequirements(tR);
-
+  public FindZero() {
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    boolean targetButton = Robot.targetButton.get();
-    if (targetButton) {
-      targeting.enableAutoTarget();
-      targeting.goToState();
-    } else
-      targeting.disableAutoTarget();
+  
   }
 
   // Called once the command ends or is interrupted.
@@ -50,10 +37,7 @@ public class TargetingCommands extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return RobotContainer.targeting.findZero();
   }
-
-  double round10(double x) {
-    return Math.round(x * 10 + 0.5) / 10.0;
-  }
+  
 }

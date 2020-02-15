@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
@@ -33,7 +34,7 @@ public class DriveTrain extends SubsystemBase implements Constants {
 	private static final double INCHES_PER_REV = MEASURED_FEET_PER_REV * 12;
 	private static final double CALC_INCHES_PER_REV = CALC_FEET_PER_REV * 12;
 	
-	//private ADXRS450_Gyro gyro;
+	private ADXRS450_Gyro gyro;
 	//private DoubleSolenoid gearPneumatic;
 	public boolean lowGear = false;
 
@@ -42,7 +43,7 @@ public class DriveTrain extends SubsystemBase implements Constants {
 		frontRight = new SparkMotor(FRONT_RIGHT);
 		backLeft = new SparkMotor(BACK_LEFT);
 		backRight = new SparkMotor(BACK_RIGHT);
-		//gyro = new ADXRS450_Gyro();
+		gyro = new ADXRS450_Gyro();
 		//gearPneumatic = new DoubleSolenoid(RobotMap.GEAR_SHIFTER_FORWARD, RobotMap.GEAR_SHIFTER_REVERSE);
 
 		System.out.println("Gear ratio is: " + LOW_FINAL_GEAR_RATIO);
@@ -106,7 +107,7 @@ public class DriveTrain extends SubsystemBase implements Constants {
 	}
 
 	public void reset() {
-	//	gyrogyro.reset();
+		gyro.reset();
 		backLeft.reset();
 		backRight.reset();
 		frontLeft.reset();
@@ -153,7 +154,7 @@ public class DriveTrain extends SubsystemBase implements Constants {
 	}
 
 	private void log() {
-		// SmartDashboard.putNumber("Heading", getHeading());
+		 SmartDashboard.putNumber("Heading", getHeading());
 		// SmartDashboard.putNumber("Left wheels",
 		// -backLeft.getSensorCollection().getQuadraturePosition());
 		// SmartDashboard.putNumber("Right wheels",
@@ -167,8 +168,8 @@ public class DriveTrain extends SubsystemBase implements Constants {
 	}
 
 	public double getHeading() {
-		//return gyro.getAngle();
-		return 0;
+		return gyro.getAngle();
+	
 	}
 
 	public void setHighGear() {
