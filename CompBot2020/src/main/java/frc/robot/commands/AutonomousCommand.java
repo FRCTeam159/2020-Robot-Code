@@ -21,8 +21,8 @@ public class AutonomousCommand extends SequentialCommandGroup {
     // super(new FooCommand(), new BarCommand());
     super(
       new FindZero()
-      //,
-     // new AdjustTarget()
+      ,
+      new AdjustTarget()
      );
   }
 }

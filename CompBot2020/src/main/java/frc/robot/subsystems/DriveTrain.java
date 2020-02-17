@@ -168,7 +168,13 @@ public class DriveTrain extends SubsystemBase implements Constants {
 	}
 
 	public double getHeading() {
-		return gyro.getAngle();
+		double angle = gyro.getAngle() % 360;
+		if(angle < -180){
+			angle += 360;
+		} else if (angle > 180 ){
+			angle -= 360;
+		}
+		return angle;
 	
 	}
 

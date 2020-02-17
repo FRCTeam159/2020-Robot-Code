@@ -34,8 +34,8 @@ public class Shooter extends SubsystemBase {
      //shootMotor = new SparkMotor(Constants.SHOOT_MOTOR);
      angleMotor = new SparkMotor(Constants.ANGLE_MOTOR); 
      //angle motor must be in break mode instead of coast.
-     forward = angleMotor.getForwardLimitSwitch(LimitSwitchPolarity.kNormallyClosed);
-     reverse =  angleMotor.getReverseLimitSwitch(LimitSwitchPolarity.kNormallyClosed);
+    forward = angleMotor.getForwardLimitSwitch(LimitSwitchPolarity.kNormallyClosed);
+    reverse =  angleMotor.getReverseLimitSwitch(LimitSwitchPolarity.kNormallyClosed);
      zeroMotor();
     log();
   }

@@ -93,7 +93,7 @@ public class Targeting extends SubsystemBase {
       autoEnabled = false;
       break;
     case FINDINGCENTER:
-      System.out.println("we are on target: " + onTarget());
+      //System.out.println("we are on target: " + onTarget());
       if (!centerFound) {
         // adjustV.enable();
         // adjustH.enable();
@@ -165,7 +165,7 @@ public class Targeting extends SubsystemBase {
     if (haveTarget.getBoolean(false)) {
       boolean ht=adjustH.atSetpoint();
       boolean vt=adjustV.atSetpoint();
-      System.out.println("ht = " +  ht + " vt = " + vt);
+     // System.out.println("ht = " +  ht + " vt = " + vt);
       
       return ( ht  && vt);
     } else {
