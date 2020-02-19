@@ -22,16 +22,17 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  public static boolean pancake = false;
 
   public static final DriveTrain driveTrain = new DriveTrain();
   private final DriveWithGamepad driveWithGamepad = new DriveWithGamepad(driveTrain);
   public static final Shooter shooter = new Shooter();
   private final ShooterCommands shooterCommands = new ShooterCommands(shooter);
-  private final Intake intake = new Intake();
-  private final IntakeCommands intakeCommands = new IntakeCommands(intake);
-  private final Climber climber = new Climber();
+  public static final Intake intake = new Intake();
+  public static IntakeCommands intakeCommands = new IntakeCommands(intake);
+  public static final Climber climber = new Climber();
   private final ClimberCommands climberCommands = new ClimberCommands(climber);
-  private final ColorWheel colorWheel = new ColorWheel();
+  public static final ColorWheel colorWheel = new ColorWheel();
   private final ColorWheelCommands colorWheelCommands = new ColorWheelCommands(colorWheel);
   public static final Cameras cameras = new Cameras();
   private final CameraCommands cameraCommands =  new CameraCommands(cameras);

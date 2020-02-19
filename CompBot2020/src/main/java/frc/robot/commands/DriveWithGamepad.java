@@ -10,8 +10,10 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.ToggleButton;
 import frc.robot.Constants;
 import frc.robot.OI;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
 /**
@@ -28,6 +30,7 @@ public class DriveWithGamepad extends CommandBase implements Constants {
   double zMinO = 0;
   boolean useDeadband = true;
   boolean Debug = false;
+  ToggleButton shifter = new ToggleButton(Robot.shiftButton);
   private final DriveTrain driveTrain;
   // Button gearButton = new Button(GEAR_BUTTON);
 
@@ -54,10 +57,14 @@ public class DriveWithGamepad extends CommandBase implements Constants {
     double xs = stick.getRawAxis(RIGHT_JOYSTICK);
     double z = zs;
     double x = xs;
-    /*
-     * if (gearButton.isPressed()) { if (Robot.drivetrain.inLowGear())
-     * Robot.drivetrain.setHighGear(); else Robot.drivetrain.setLowGear(); }
-     */
+
+    if(shifter.newState()){
+      if (driveTrain.inLowGear())
+        driveTrain.setHighGear();
+      else
+        driveTrain.setLowGear();
+    }
+
     if (useDeadband) {
       z = quadDeadband(zMinT, zMinO, zs);
       x = quadDeadband(xMinT, xMinO, xs);

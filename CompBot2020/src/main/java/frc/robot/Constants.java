@@ -26,15 +26,19 @@ public interface Constants {
   public static final int BACK_RIGHT = 1;
 
   public static final int COLOR_MOTOR = 5;
-  public static final int LAUNCH_MOTOR = 5;
+  public static final int HOPPER_MOTOR = 6;
   public static final int FEED_MOTOR = 5;
   public static final int ANGLE_MOTOR = 5;
-  public static final int SHOOT_MOTOR = 5;
+  public static final int SHOOT_MOTOR1 = 5;
+  public static final int SHOOT_MOTOR2 = 5;
+  public static final int INTAKE_MOTOR = 5;
+  public static final int CLIMB_MOTOR = 5;
   // Piston IDs
   public static final int GEAR_SHIFTER_FORWARD = 0;
   public static final int GEAR_SHIFTER_REVERSE = 1;
   public static final int COLOR_PISTON_FORWARD = 2;
   public static final int COLOR_PISTON_REVERSE = 3;
+  public static final int INTAKE_PISTON = 4;
 
   // Servo IDs
   public static final int ARM_SERVO = 0;

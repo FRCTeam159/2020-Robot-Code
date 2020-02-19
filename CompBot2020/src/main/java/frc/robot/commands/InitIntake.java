@@ -8,39 +8,34 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.ToggleButton;;
+import frc.robot.RobotContainer;
 
-public class IntakeCommands extends CommandBase {
+public class InitIntake extends CommandBase {
   /**
-   * Creates a new IntakeCommands.
+   * Creates a new InitIntake.
    */
-  ToggleButton toggleIntake = new ToggleButton(Robot.intakeButton);
-  private final Intake intake;
-  public IntakeCommands(Intake iT) {
-    intake = iT;
-    addRequirements(iT);
+  public InitIntake() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.enableHopper(true);
+    RobotContainer.intake.enableHopper(true);
+    RobotContainer.intake.lowerIntake();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(toggleIntake.newState()){
-      intake.enableIntake(!intake.isIntakeEnabled());
-    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    if(interrupted){
+      System.out.println("The init intake command ran and was interupted");
+    }
   }
 
   // Returns true when the command should end.

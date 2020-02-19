@@ -7,11 +7,13 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ToggleButton;
 
 public class ShooterCommands extends CommandBase {
   /**
@@ -20,6 +22,7 @@ public class ShooterCommands extends CommandBase {
    * @param shooter
    */
   boolean lastState;
+  ToggleButton toggleFire = new ToggleButton(Robot.toggleLaunchButton);
   private final Shooter shooter;
 
   public ShooterCommands(Shooter sT) {
@@ -40,31 +43,33 @@ public class ShooterCommands extends CommandBase {
     double leftTriggerPressed = OI.stick.getRawAxis(Constants.LEFT_TRIGGER);
     double leftTrigger = -leftTriggerPressed;
     double rightTrigger = rightTriggerPressed;
-    boolean toggleFire = OI.stick.getRawButton(Constants.LEFT_BUMPER_BUTTON);
     boolean feederButton = OI.stick.getRawButton(Constants.RIGHT_BUMPER_BUTTON);
     //method for adjusting robot shooter angle, use triggers.
     if (leftTrigger == 0 && rightTrigger > 0) {
-      shooter.changeShootAngle(0.1 * (rightTrigger));
+      shooter.changeShootAngle(0.6 * (rightTrigger));
     } else if (rightTrigger == 0 && leftTrigger < 0) {
-      shooter.changeShootAngle(0.1 * (leftTrigger));
+      shooter.changeShootAngle(0.6 * (leftTrigger));
     }
     //toggle wheel input for launching the balls from shooter, use left bumper.
-    if (toggleFire && !lastState) {
+   // if (toggleFire && !lastState) {
+     if(toggleFire.newState()){
       if (shooter.isLaunch()) {
         shooter.setLauch(false);
       } else {
         shooter.setLauch(true);
       }
-      lastState = true;
-    } else if (!toggleFire && lastState) {
-      lastState = false;
     }
+     // lastState = true;
+    //} else if (!toggleFire && lastState) {
+      //lastState = false;
+    //}
     // feeding input for the shooter, use right bumper.
     if (feederButton) {
       shooter.feed(true);
     } else {
       shooter.feed(false);
     }
+    shooter.setLaunchValue(shooter.getLaunchValue());
     shooter.log();
   }
 

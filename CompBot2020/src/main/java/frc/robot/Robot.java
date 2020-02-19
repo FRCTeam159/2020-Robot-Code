@@ -27,7 +27,8 @@ public class Robot extends TimedRobot {
   public static JoystickButton cameraButton;
   public static JoystickButton toggleLaunchButton;
   public static JoystickButton feedButton;
-  public static JoystickButton colorMatchButton;
+  public static JoystickButton intakeButton;
+  public static JoystickButton shiftButton;
   public static double leftTriggerPressed;
   public static double rightTriggerPressed;
   public static boolean isAuto;
@@ -44,9 +45,9 @@ public class Robot extends TimedRobot {
     targetButton = new JoystickButton(OI.stick, Constants.Y_BUTTON);
     cameraButton = new JoystickButton(OI.stick, Constants.A_BUTTON);
     toggleLaunchButton = new JoystickButton(OI.stick, Constants.LEFT_BUMPER_BUTTON);
-   // colorRotationButton = new JoystickButton(OI.stick, Constants.B_BUTTON);
-   // colorMatchButton = new JoystickButton(OI.stick, Constants.X_BUTTON); 
+    intakeButton = new JoystickButton(OI.stick, Constants.B_BUTTON);
     feedButton = new JoystickButton(OI.stick, Constants.RIGHT_BUMPER_BUTTON);
+    shiftButton = new JoystickButton(OI.stick, Constants.LEFT_JOYSTICK_BUTTON);
 
 
     m_robotContainer = new RobotContainer();

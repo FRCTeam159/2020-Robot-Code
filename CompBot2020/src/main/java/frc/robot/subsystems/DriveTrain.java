@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
@@ -35,7 +36,7 @@ public class DriveTrain extends SubsystemBase implements Constants {
 	private static final double CALC_INCHES_PER_REV = CALC_FEET_PER_REV * 12;
 	
 	private ADXRS450_Gyro gyro;
-	//private DoubleSolenoid gearPneumatic;
+	private DoubleSolenoid gearPneumatic;
 	public boolean lowGear = false;
 
 	public DriveTrain() {
@@ -44,18 +45,9 @@ public class DriveTrain extends SubsystemBase implements Constants {
 		backLeft = new SparkMotor(BACK_LEFT);
 		backRight = new SparkMotor(BACK_RIGHT);
 		gyro = new ADXRS450_Gyro();
-		//gearPneumatic = new DoubleSolenoid(RobotMap.GEAR_SHIFTER_FORWARD, RobotMap.GEAR_SHIFTER_REVERSE);
+		gearPneumatic = new DoubleSolenoid(Constants.GEAR_SHIFTER_FORWARD, Constants.GEAR_SHIFTER_REVERSE);
 
 		System.out.println("Gear ratio is: " + LOW_FINAL_GEAR_RATIO);
-
-		/*
-		 * frontRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0,
-		 * RobotMap.TIMEOUT);
-		 * backLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0,
-		 * RobotMap.TIMEOUT); System.out.println("Ticks Per Foot: " + TICKS_PER_FOOT);
-		 * gyro = new ADXRS450_Gyro();
-		 */
-		// frontLeft.setSafetyEnabled(true);
 		reset();
 	}
 
@@ -84,11 +76,7 @@ public class DriveTrain extends SubsystemBase implements Constants {
 		// Make sure values are between -1 and 1
 		leftMotorOutput = coerce(-1, 1, leftMotorOutput);
 		rightMotorOutput = coerce(-1, 1, rightMotorOutput);
-		/*
-		 * System.out.printf("l:%d r:%d\n",
-		 * frontRight.getSensorCollection().getQuadraturePosition(),
-		 * -backLeft.getSensorCollection().getQuadraturePosition());
-		 */
+		
 		// lastMoveValue = moveValue;
 		setRaw(leftMotorOutput, rightMotorOutput);
 		// setRaw(0, rightMotorOutput);
@@ -136,16 +124,14 @@ public class DriveTrain extends SubsystemBase implements Constants {
 	public double getRightDistance() {
 		double rightPosition = backRight.getRotations() + frontRight.getRotations();
 		return -CALC_INCHES_PER_REV * rightPosition / 2;
-		// return frontRight.getSensorCollection().getQuadraturePosition() /
-		// TICKS_PER_FOOT;
+
 	}
 
 	public double getLeftDistance() {
 		double leftPosition = backLeft.getRotations() + frontLeft.getRotations();
 		return CALC_INCHES_PER_REV * leftPosition / 2;
 
-		// return -backLeft.getSensorCollection().getQuadraturePosition() /
-		// TICKS_PER_FOOT;
+
 	}
 	private double getRevolutions(){
 		double leftRevs =  0.5*(backLeft.getRotations() + frontLeft.getRotations());
@@ -156,9 +142,7 @@ public class DriveTrain extends SubsystemBase implements Constants {
 	private void log() {
 		 SmartDashboard.putNumber("Heading", getHeading());
 		// SmartDashboard.putNumber("Left wheels",
-		// -backLeft.getSensorCollection().getQuadraturePosition());
 		// SmartDashboard.putNumber("Right wheels",
-		// frontRight.getSensorCollection().getQuadraturePosition());
 		// SmartDashboard.putNumber("Left distance", getLeftDistance());
 		// SmartDashboard.putNumber("Right distance", getRightDistance());
 		// SmartDashboard.putNumber("Velocity", getVelocity());
@@ -180,7 +164,7 @@ public class DriveTrain extends SubsystemBase implements Constants {
 
 	public void setHighGear() {
 		if (lowGear) {
-	//		gearPneumatic.set(DoubleSolenoid.Value.kReverse);
+			gearPneumatic.set(DoubleSolenoid.Value.kReverse);
 			lowGear = false;
 			TRUE_GEAR_RATIO = HIGH_FINAL_GEAR_RATIO;
 		}
@@ -188,7 +172,7 @@ public class DriveTrain extends SubsystemBase implements Constants {
 
 	public void setLowGear() {
 		if (!lowGear) {
-		//	gearPneumatic.set(DoubleSolenoid.Value.kForward);
+			gearPneumatic.set(DoubleSolenoid.Value.kForward);
 			lowGear = true;
 			TRUE_GEAR_RATIO = LOW_FINAL_GEAR_RATIO;
 		}

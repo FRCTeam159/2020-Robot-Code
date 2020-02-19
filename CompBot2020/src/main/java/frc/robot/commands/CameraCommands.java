@@ -8,13 +8,16 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Robot;
 import frc.robot.subsystems.Cameras;
+import frc.robot.subsystems.ToggleButton;
 
 public class CameraCommands extends CommandBase {
   /**
    * Creates a new CameraCommands.
    */
+  ToggleButton cameraButton = new ToggleButton(Robot.cameraButton);
   Cameras cams;
   boolean prevTrigger = false;
 
@@ -32,23 +35,31 @@ public class CameraCommands extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    boolean cameraButton = Robot.cameraButton.get();
+    // boolean cameraButton = Robot.cameraButton.get();
     cams.setBrightness();
-    if (cameraButton && !prevTrigger) {
-      if(Cameras.isFront()){
+    if (cameraButton.newState()) {
+      if (Cameras.isFront()) {
         System.out.println("Setting back camera");
         cams.setBack();
-      } else{
+      } else {
         System.out.println("Setting front camera");
         cams.setFront();
       }
-      prevTrigger = true;
-    } else if(prevTrigger && !cameraButton){
-      prevTrigger = false;
     }
-    //cams.writeVideo();
+    // if (cameraButton && !prevTrigger) {
+    // if(Cameras.isFront()){
+    // System.out.println("Setting back camera");
+    // cams.setBack();
+    // } else{
+    // System.out.println("Setting front camera");
+    // cams.setFront();
+    // }
+    // prevTrigger = true;
+    // } else if(prevTrigger && !cameraButton){
+    // prevTrigger = false;
+    // }
+    // cams.writeVideo();
   }
-  
 
   // Called once the command ends or is interrupted.
   @Override

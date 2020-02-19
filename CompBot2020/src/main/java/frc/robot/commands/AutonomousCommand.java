@@ -20,9 +20,17 @@ public class AutonomousCommand extends SequentialCommandGroup {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     super(
+      new InitIntake().withTimeout(1.0)
+    ,
+      new startLaunchWheels().withTimeout(1.0)
+    ,
       new FindZero()
-      ,
+    ,
       new AdjustTarget()
+    ,
+      new startFeeder().withTimeout(1.0)
+    ,
+      new endShooting().withTimeout(0.5)
      );
   }
 }
