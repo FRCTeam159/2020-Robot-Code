@@ -32,15 +32,17 @@ public class Shooter extends SubsystemBase {
 
   public Shooter() {
     shooterMotorValue = 0.6;
+    angleMotor = new SparkMotor(Constants.ANGLE_MOTOR);
+    forward = angleMotor.getForwardLimitSwitch(LimitSwitchPolarity.kNormallyClosed);
+    reverse = angleMotor.getReverseLimitSwitch(LimitSwitchPolarity.kNormallyClosed);
+    zeroMotor();
     if (!RobotContainer.pancake) {
        shootMotor1 = new SparkMotor(Constants.SHOOT_MOTOR1);
        shootMotor2 = new SparkMotor(Constants.SHOOT_MOTOR2);
-      angleMotor = new SparkMotor(Constants.ANGLE_MOTOR);
+
            feedMotor = new SparkMotor(Constants.FEED_MOTOR);
       // angle motor must be in break mode instead of coast.
-      forward = angleMotor.getForwardLimitSwitch(LimitSwitchPolarity.kNormallyClosed);
-      reverse = angleMotor.getReverseLimitSwitch(LimitSwitchPolarity.kNormallyClosed);
-      zeroMotor();
+     
     }
     log();
   }

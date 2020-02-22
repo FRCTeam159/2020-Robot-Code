@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  public static boolean pancake = false;
+  public static boolean pancake = true;
 
   public static final DriveTrain driveTrain = new DriveTrain();
   private final DriveWithGamepad driveWithGamepad = new DriveWithGamepad(driveTrain);

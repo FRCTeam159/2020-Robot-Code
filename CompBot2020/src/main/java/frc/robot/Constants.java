@@ -26,7 +26,7 @@ public interface Constants {
   public static final int BACK_RIGHT = 1;
 
   public static final int COLOR_MOTOR = 5;
-  public static final int HOPPER_MOTOR = 6;
+  public static final int HOPPER_MOTOR = 12;
   public static final int FEED_MOTOR = 5;
   public static final int ANGLE_MOTOR = 5;
   public static final int SHOOT_MOTOR1 = 5;

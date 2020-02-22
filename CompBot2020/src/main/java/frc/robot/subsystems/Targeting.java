@@ -23,11 +23,17 @@ public class Targeting extends SubsystemBase {
   private NetworkTableEntry haveTarget;
   private NetworkTableEntry atTarget;
   private NetworkTableEntry autotarget;
+  private NetworkTableEntry hTweek;
 
   public static double hToll = 1.5;
   public static double vToll = 1.5;
   public static double hVMax = 1.0;
   public static double vVMax = 1.0;
+  public static double targetHeight = 8.0 + 2.25/12; //center of target height from floor in ft
+  public static double radsToDegrees = 360/(2 * Math.PI);
+  public double vudge = 0;
+  public double wheelDiameter = 4.0 / 12; //ft
+  public double wheelCircumference = wheelDiameter * Math.PI; //ft
 
   NetworkTable table;
   public static boolean autoEnabled = false;
@@ -57,6 +63,7 @@ public class Targeting extends SubsystemBase {
     haveTarget = table.getEntry("targets");
     atTarget = table.getEntry("atTarget");
     autotarget = table.getEntry("autotarget");
+    hTweek = table.getEntry("hTweek");
     adjustH = new AdjustH();
     adjustV = new AdjustV();
     // SmartDashboard.putNumber("autotarget", 0.0);
@@ -102,9 +109,6 @@ public class Targeting extends SubsystemBase {
         centerFound = true;
         state = states.FINDINGOFFSET;
       }
-      break;
-    case FINDINGOFFSET:
-      state = states.ONTARGET;
       break;
     case ONTARGET:
        targetingDone = true;
@@ -172,10 +176,17 @@ public class Targeting extends SubsystemBase {
       return false;
     }
   }
+ 
+  public double getCurrentAngle(){
+    return 0.0;
+  }
+  public double setFlywheelVelocity(double v){
+    return 0.0;
+  }
 
   protected class AdjustH extends PIDController {
-    static final double kP = 0.01;
-    static final double kI = 0.0001;
+    static final double kP = 0.005;
+    static final double kI = 0.0;
     static final double kD = 0.0;
 
     public AdjustH() {
@@ -196,8 +207,9 @@ public class Targeting extends SubsystemBase {
 
     public void calculate() {
       double hOff = hAngle.getDouble(0.0);
-      double output = super.calculate(hOff);
-      System.out.println("output is" + output);
+      double tweek = hTweek.getDouble(0.0);
+      double output = super.calculate(hOff + tweek);
+     // System.out.println("output is" + output);
       RobotContainer.driveTrain.arcadeDrive(0, -output);
     }
   }
@@ -211,6 +223,14 @@ public class Targeting extends SubsystemBase {
       super(vP, vI, vD, 0.02);
       setTolerance(vToll, vVMax);
       setSetpoint(0.0);
+    }
+    public double findOffsets(){
+      double dist = distance.getDouble(0.0) / 12.0 ;
+      double shooterAngle = Math.atan((targetHeight*2.0/dist)) * radsToDegrees;
+      double targetAngle = Math.atan(targetHeight/dist) * radsToDegrees;
+      double vel = Math.sqrt(targetHeight * 2 * 32); //g = 32ft/sec^2
+      double wheelVelocity = vel/wheelCircumference; //ft
+      return shooterAngle - targetAngle;
     }
 
     public void calculate() {

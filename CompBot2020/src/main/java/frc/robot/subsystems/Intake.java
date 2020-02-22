@@ -20,9 +20,10 @@ public class Intake extends SubsystemBase {
   private SparkMotor intake;
   private Boolean isHopperEnabled = false;
   private Boolean isIntakeEnabled = false;
-  private Solenoid intakePiston = new Solenoid(Constants.INTAKE_PISTON);
+  private Solenoid intakePiston; 
   public Intake() {
     if(!RobotContainer.pancake){
+    intakePiston = new Solenoid(Constants.INTAKE_PISTON);
     intake  = new SparkMotor(Constants.INTAKE_MOTOR);
     hopper = new SparkMotor(Constants.HOPPER_MOTOR);
     }

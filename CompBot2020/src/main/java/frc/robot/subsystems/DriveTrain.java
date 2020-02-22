@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 /**
  * Add your docs here.
@@ -45,8 +46,9 @@ public class DriveTrain extends SubsystemBase implements Constants {
 		backLeft = new SparkMotor(BACK_LEFT);
 		backRight = new SparkMotor(BACK_RIGHT);
 		gyro = new ADXRS450_Gyro();
+		if(!RobotContainer.pancake){
 		gearPneumatic = new DoubleSolenoid(Constants.GEAR_SHIFTER_FORWARD, Constants.GEAR_SHIFTER_REVERSE);
-
+		}
 		System.out.println("Gear ratio is: " + LOW_FINAL_GEAR_RATIO);
 		reset();
 	}
@@ -163,8 +165,11 @@ public class DriveTrain extends SubsystemBase implements Constants {
 	}
 
 	public void setHighGear() {
+		
 		if (lowGear) {
+			if(!RobotContainer.pancake){
 			gearPneumatic.set(DoubleSolenoid.Value.kReverse);
+			}
 			lowGear = false;
 			TRUE_GEAR_RATIO = HIGH_FINAL_GEAR_RATIO;
 		}
@@ -172,7 +177,9 @@ public class DriveTrain extends SubsystemBase implements Constants {
 
 	public void setLowGear() {
 		if (!lowGear) {
+			if(!RobotContainer.pancake){
 			gearPneumatic.set(DoubleSolenoid.Value.kForward);
+			}
 			lowGear = true;
 			TRUE_GEAR_RATIO = LOW_FINAL_GEAR_RATIO;
 		}
