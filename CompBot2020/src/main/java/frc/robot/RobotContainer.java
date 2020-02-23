@@ -32,8 +32,8 @@ public class RobotContainer {
   public static IntakeCommands intakeCommands = new IntakeCommands(intake);
   public static final Climber climber = new Climber();
   private final ClimberCommands climberCommands = new ClimberCommands(climber);
-  public static final ColorWheel colorWheel = new ColorWheel();
-  private final ColorWheelCommands colorWheelCommands = new ColorWheelCommands(colorWheel);
+  // public static final ColorWheel colorWheel = new ColorWheel();
+  // private final ColorWheelCommands colorWheelCommands = new ColorWheelCommands(colorWheel);
   public static final Cameras cameras = new Cameras();
   private final CameraCommands cameraCommands =  new CameraCommands(cameras);
   public static final Targeting targeting = new Targeting();
@@ -51,7 +51,7 @@ public class RobotContainer {
     driveTrain.setDefaultCommand(driveWithGamepad);
     shooter.setDefaultCommand(shooterCommands);
     targeting.setDefaultCommand(targetingCommands);
-    colorWheel.setDefaultCommand(colorWheelCommands);
+   // colorWheel.setDefaultCommand(colorWheelCommands);
     intake.setDefaultCommand(intakeCommands);
     climber.setDefaultCommand(climberCommands);
     cameras.setDefaultCommand(cameraCommands);

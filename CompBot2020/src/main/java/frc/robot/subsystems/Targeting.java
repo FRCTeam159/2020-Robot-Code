@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
+
 public class Targeting extends SubsystemBase {
   private NetworkTableEntry hAngle;
   private NetworkTableEntry vAngle;
@@ -24,6 +25,7 @@ public class Targeting extends SubsystemBase {
   private NetworkTableEntry atTarget;
   private NetworkTableEntry autotarget;
   private NetworkTableEntry hTweek;
+  private NetworkTableEntry vTweek;
 
   public static double hToll = 1.5;
   public static double vToll = 1.5;
@@ -40,6 +42,7 @@ public class Targeting extends SubsystemBase {
   public static boolean zeroFound = false;
   public static boolean centerFound = false;
   public static boolean targetingDone = false;
+  public boolean isVadjust = false;
   Cameras cams;
 
   public enum states {
@@ -64,6 +67,7 @@ public class Targeting extends SubsystemBase {
     atTarget = table.getEntry("atTarget");
     autotarget = table.getEntry("autotarget");
     hTweek = table.getEntry("hTweek");
+    vTweek = table.getEntry("vTweek");
     adjustH = new AdjustH();
     adjustV = new AdjustV();
     // SmartDashboard.putNumber("autotarget", 0.0);
@@ -133,6 +137,10 @@ public class Targeting extends SubsystemBase {
       adjustH.enable();
     //}
     log();
+  }
+  public void adjustWheelSpeed(){
+    double vel = Math.sqrt(targetHeight * 2 * 32); //g = 32ft/sec^2
+    double wheelVelocity = vel/wheelCircumference; //ft
   }
 
   public void log() {
@@ -224,26 +232,24 @@ public class Targeting extends SubsystemBase {
       setTolerance(vToll, vVMax);
       setSetpoint(0.0);
     }
-    public double findOffsets(){
-      double dist = distance.getDouble(0.0) / 12.0 ;
-      double shooterAngle = Math.atan((targetHeight*2.0/dist)) * radsToDegrees;
-      double targetAngle = Math.atan(targetHeight/dist) * radsToDegrees;
-      double vel = Math.sqrt(targetHeight * 2 * 32); //g = 32ft/sec^2
-      double wheelVelocity = vel/wheelCircumference; //ft
-      return shooterAngle - targetAngle;
-    }
 
     public void calculate() {
       double vOff = vAngle.getDouble(0.0);
-      double output = super.calculate(vOff);
+      double tweek = vTweek.getDouble(0.0);
+      double output = super.calculate(vOff + tweek);
       RobotContainer.shooter.changeShootAngle(output);
     }
 
     public void disable() {
       disableContinuousInput();
+      if(isVadjust){
+      RobotContainer.shooter.changeShootAngle(0.0);
+      isVadjust = false;
+      }
     }
 
     public void enable() {
+      isVadjust = true;
       enableContinuousInput(-30, 30);
     }
   }

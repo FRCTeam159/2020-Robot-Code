@@ -33,10 +33,11 @@ public class Shooter extends SubsystemBase {
   public Shooter() {
     shooterMotorValue = 0.6;
     angleMotor = new SparkMotor(Constants.ANGLE_MOTOR);
+    zeroMotor();
+
+    if (!RobotContainer.pancake) {
     forward = angleMotor.getForwardLimitSwitch(LimitSwitchPolarity.kNormallyClosed);
     reverse = angleMotor.getReverseLimitSwitch(LimitSwitchPolarity.kNormallyClosed);
-    zeroMotor();
-    if (!RobotContainer.pancake) {
        shootMotor1 = new SparkMotor(Constants.SHOOT_MOTOR1);
        shootMotor2 = new SparkMotor(Constants.SHOOT_MOTOR2);
 
@@ -53,7 +54,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void changeShootAngle(double value) {
-    if (!RobotContainer.pancake) {
+    if (RobotContainer.pancake) {
       log();
       angleMotor.set(value);
     } else {
@@ -97,13 +98,16 @@ public class Shooter extends SubsystemBase {
   }
 
   public void log() {
+    if(!RobotContainer.pancake){
     SmartDashboard.putNumber("Angle Rotation", angleMotor.getRotations());
     SmartDashboard.putBoolean("IsAtTop", isAtTop());
     SmartDashboard.putBoolean("IsAtBottom", isAtBottom());
+    }
     SmartDashboard.putNumber("Shoot Value", shooterMotorValue);
   }
 
   public void zeroMotor() {
+    if(RobotContainer.pancake)
     angleMotor.reset();
   }
   public void setLaunchValue(double v){

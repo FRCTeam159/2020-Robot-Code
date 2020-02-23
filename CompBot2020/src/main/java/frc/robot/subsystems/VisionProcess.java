@@ -34,10 +34,14 @@ public class VisionProcess extends Thread {
   // static UsbCamera camera1;
   public static double targetWidth = 34.0; // physical width of target (inches)
   public static double targetHeight = 4.0; // physical height of target (inches)
+  public static double targetFloorHeight = 3;
   public static double distanceToFillWidth = 45.0; // measured distance where target just fills screen (width)
   public static double distanceToFillHeight = 6.25; // measured distance where target just fills screen (height)
   public static double cameraFovW = 2 * Math.atan(0.5 * targetWidth / distanceToFillWidth); // 41.8 degrees
   public static double cameraFovH = 2 * Math.atan(0.5 * targetHeight / distanceToFillHeight); // 33.0 degrees
+  public static double radsToDegrees = 360/(2 * Math.PI);
+  public double wheelDiameter = 4.0 / 12; //ft
+  public double wheelCircumference = wheelDiameter * Math.PI; //ft
   public static double hTarget = 0.0;
   public static double vTarget = 0.0;
   // public static double hToll = 1.0;
@@ -102,13 +106,19 @@ public class VisionProcess extends Thread {
      xOff  = -(RobotContainer.driveTrain.getHeading());
     xOff = Robot.coerce(-10.5, 10.5, xOff);
     double aOff = angleFactorWidth*xOff;
-    return xOff;
+    return hAngle.getDouble(0.0) + xOff;
   }
   public double verticalTweek(){
-    return 0.0;
+    double dist = distance.getDouble(0.0) / 12.0 ;
+    double shooterAngle = Math.atan(((targetHeight * 2.0) / dist)) * radsToDegrees;
+    double targetAngle = Math.atan(targetHeight / dist) * radsToDegrees;
+
+    return shooterAngle - targetAngle;
   }
+
   public void log(){
     SmartDashboard.putNumber("xOff", xOff);
+    double verTweek = vTweek.getDouble(0.0);
     double hoff = hAngle.getDouble(0.0);
     double dw = distance.getDouble(0.0);
     double voff = vAngle.getDouble(0.0);
@@ -118,6 +128,7 @@ public class VisionProcess extends Thread {
     SmartDashboard.putNumber("H angle", round10(hoff));
     SmartDashboard.putNumber("V angle", round10(voff));
     SmartDashboard.putBoolean("onTarget", isAtTarget);
+    SmartDashboard.putNumber("Vertical Tweek", round10(verTweek));
   }
 
   public void run() {
@@ -204,8 +215,10 @@ public class VisionProcess extends Thread {
         Point ctr = center(biggest);
         double hoff = angleFactorWidth * (ctr.x - 0.5 * imageWidth);
         double horTweek = horizontalTweek();
+        double verTweek = verticalTweek();
         double voff = -angleFactorHeight * (ctr.y - 0.5 * imageHeight); // invert y !
         hTweek.setDouble(horTweek);
+        vTweek.setDouble(verTweek);
         hAngle.setDouble(hoff);
         vAngle.setDouble(voff);
         distance.setDouble(dw);
@@ -238,7 +251,8 @@ public class VisionProcess extends Thread {
         double width  = br.x - tl.x;
         double xVal = tl.x + 0.5*(width);
         double xTweek = (xOff  * width)/targetWidth;
-        Point xPoint = new Point(xVal + xTweek, tl.y);
+        double yTweek = tl.y - (verticalTweek() / angleFactorHeight);
+        Point xPoint = new Point(xVal + xTweek, tl.y + yTweek);
         if (r == biggest){
           Imgproc.rectangle(mat, tl, br, new Scalar(255.0, 255.0, 0.0), 2);
           Imgproc.drawMarker(mat, xPoint, new Scalar(0, 0 , 255), Imgproc.MARKER_CROSS, 35 , 2 , 8);
