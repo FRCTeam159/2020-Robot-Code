@@ -18,6 +18,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Cameras extends SubsystemBase {
@@ -48,6 +49,7 @@ public class Cameras extends SubsystemBase {
     camera2.setResolution(320, 240);
     //outputStream = CameraServer.getInstance().putVideo("CameraView", 320, 240);
     setFront();
+    log();
   }
 
   @Override
@@ -58,11 +60,13 @@ public class Cameras extends SubsystemBase {
     server.setSource(camera1);
     cvSink = CameraServer.getInstance().getVideo(camera1);
     is_Front = true;
+    log();
   }
   public void setBack(){
     server.setSource(camera2);
     cvSink = CameraServer.getInstance().getVideo(camera2);
     is_Front = false;
+    log();
   }
   public static boolean isFront(){
     return is_Front;
@@ -75,6 +79,10 @@ public class Cameras extends SubsystemBase {
       Cameras.camera1.setBrightness(50);
       Cameras.camera1.setExposureManual(3);
     }
+    log();
+  }
+  public void log(){
+    SmartDashboard.putBoolean("Front", isFront());
   }
   /*
   public void writeVideo(){

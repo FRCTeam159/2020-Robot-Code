@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.OI;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ToggleButton;
 
@@ -29,7 +30,6 @@ public class ShooterCommands extends CommandBase {
   boolean lastState;
   ToggleButton toggleFire = new ToggleButton(Robot.toggleLaunchButton);
   private final Shooter shooter;
-
 
   public ShooterCommands(Shooter sT) {
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -54,38 +54,41 @@ public class ShooterCommands extends CommandBase {
     double leftTrigger = leftTriggerPressed;
     double rightTrigger = rightTriggerPressed;
     boolean feederButton = OI.stick.getRawButton(Constants.RIGHT_BUMPER_BUTTON);
-    //method for adjusting robot shooter angle, use triggers.
-    if(!istargeting){
-    if (rightTrigger > 0.03) {
+    // method for adjusting robot shooter angle, use triggers.
+    if (!istargeting) {
+      if (rightTrigger > 0.1) {
+        shooter.changeShootAngle(0.3 * (-rightTrigger));
 
-      shooter.changeShootAngle(0.6 * (rightTrigger));
+      }  if (leftTrigger > 0.1) {
 
-    } else if (leftTrigger > 0.03) {
-     
-      shooter.changeShootAngle(0.6 * (-leftTrigger));
-    }else{
-    
-      shooter.changeShootAngle(0.0);
+        shooter.changeShootAngle(0.3 * (leftTrigger));
+      } if(leftTrigger < 0.1 && rightTrigger < 0.1 )
+        shooter.changeShootAngle(0.0);
     }
-  }
-    //toggle wheel input for launching the balls from shooter, use left bumper.
-   // if (toggleFire && !lastState) {
-     if(toggleFire.newState()){
-      if (shooter.isLaunch()) {
-        shooter.setLauch(false);
-      } else {
-        shooter.setLauch(true);
-      }
-    }
-     // lastState = true;
-    //} else if (!toggleFire && lastState) {
-      //lastState = false;
-    //}
+    // toggle wheel input for launching the balls from shooter, use left bumper.
+    // if (toggleFire && !lastState) {
+    // if (toggleFire.newState()) {
+    //   if (shooter.isLaunch()) {
+    //     shooter.setLauch(true);
+    //   } else {
+    //     shooter.setLauch(false);
+    //   }
+    // }
+    // lastState = true;
+    // } else if (!toggleFire && lastState) {
+    // lastState = false;
+    // }
     // feeding input for the shooter, use right bumper.
     if (feederButton) {
+      shooter.setLauch(true);
       shooter.feed(true);
+      RobotContainer.intake.enableHopper(true);
+
     } else {
+      shooter.setLauch(false);
       shooter.feed(false);
+      RobotContainer.intake.enableHopper(false);
+ 
     }
     shooter.setLaunchValue(shooter.getLaunchValue());
     shooter.log();

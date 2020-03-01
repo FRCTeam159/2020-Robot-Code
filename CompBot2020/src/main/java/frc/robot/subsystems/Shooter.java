@@ -31,19 +31,19 @@ public class Shooter extends SubsystemBase {
   public CANDigitalInput reverse;
 
   public Shooter() {
-    shooterMotorValue = 0.6;
-    angleMotor = new SparkMotor(Constants.ANGLE_MOTOR);
-    zeroMotor();
+    shooterMotorValue = 1.0;
 
     if (!RobotContainer.pancake) {
-    forward = angleMotor.getForwardLimitSwitch(LimitSwitchPolarity.kNormallyClosed);
-    reverse = angleMotor.getReverseLimitSwitch(LimitSwitchPolarity.kNormallyClosed);
-       shootMotor1 = new SparkMotor(Constants.SHOOT_MOTOR1);
-       shootMotor2 = new SparkMotor(Constants.SHOOT_MOTOR2);
+      angleMotor = new SparkMotor(Constants.ANGLE_MOTOR);
+      zeroMotor();
+      forward = angleMotor.getForwardLimitSwitch(LimitSwitchPolarity.kNormallyClosed);
+      reverse = angleMotor.getReverseLimitSwitch(LimitSwitchPolarity.kNormallyClosed);
+      shootMotor1 = new SparkMotor(Constants.SHOOT_MOTOR_R);
+      shootMotor2 = new SparkMotor(Constants.SHOOT_MOTOR_L);
 
-           feedMotor = new SparkMotor(Constants.FEED_MOTOR);
+      feedMotor = new SparkMotor(Constants.FEED_MOTOR);
       // angle motor must be in break mode instead of coast.
-     
+
     }
     log();
   }
@@ -54,7 +54,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void changeShootAngle(double value) {
-    if (RobotContainer.pancake) {
+    if (!RobotContainer.pancake) {
       log();
       angleMotor.set(value);
     } else {
@@ -90,30 +90,35 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isAtTop() {
-    return forward.get();
-  }
-
-  public boolean isAtBottom() {
     return reverse.get();
   }
 
+  public boolean isAtBottom() {
+    return forward.get();
+  }
+
   public void log() {
-    if(!RobotContainer.pancake){
-    SmartDashboard.putNumber("Angle Rotation", angleMotor.getRotations());
-    SmartDashboard.putBoolean("IsAtTop", isAtTop());
-    SmartDashboard.putBoolean("IsAtBottom", isAtBottom());
+    if (!RobotContainer.pancake) {
+      SmartDashboard.putNumber("Angle Rotation", getAngleRotations());
+      SmartDashboard.putBoolean("IsAtTop", isAtTop());
+      SmartDashboard.putBoolean("IsAtBottom", isAtBottom());
     }
     SmartDashboard.putNumber("Shoot Value", shooterMotorValue);
   }
 
   public void zeroMotor() {
-    if(RobotContainer.pancake)
-    angleMotor.reset();
+    if (!RobotContainer.pancake)
+      angleMotor.reset();
   }
-  public void setLaunchValue(double v){
+
+  public void setLaunchValue(double v) {
     shooterMotorValue = v;
   }
-  public double getLaunchValue(){
+
+  public double getLaunchValue() {
     return SmartDashboard.getNumber("Shoot Value", 0.0);
+  }
+  public double getAngleRotations(){
+    return angleMotor.getRotations();
   }
 }

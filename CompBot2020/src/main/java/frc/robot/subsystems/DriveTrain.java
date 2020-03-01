@@ -150,7 +150,7 @@ public class DriveTrain extends SubsystemBase implements Constants {
 		// SmartDashboard.putNumber("Velocity", getVelocity());
 		SmartDashboard.putNumber("Revolutions", getRevolutions());
 		SmartDashboard.putNumber("Distance", getDistance());
-		// SmartDashboard.putBoolean("Low Gear", inLowGear());
+		SmartDashboard.putBoolean("Low Gear", inLowGear());
 	}
 
 	public double getHeading() {
@@ -176,6 +176,7 @@ public class DriveTrain extends SubsystemBase implements Constants {
 	}
 
 	public void setLowGear() {
+// close is out out low gear
 		if (!lowGear) {
 			if(!RobotContainer.pancake){
 			gearPneumatic.set(DoubleSolenoid.Value.kForward);

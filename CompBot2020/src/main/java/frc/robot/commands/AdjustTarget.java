@@ -51,6 +51,7 @@ public class AdjustTarget extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return RobotContainer.targeting.isTargetingDone();
+    return RobotContainer.targeting.onTarget();
+    //return RobotContainer.targeting.isTargetingDone();
   }
 }

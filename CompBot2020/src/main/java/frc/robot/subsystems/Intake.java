@@ -7,10 +7,13 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.commands.repowerIntake;
 
 public class Intake extends SubsystemBase {
   /**
@@ -20,44 +23,55 @@ public class Intake extends SubsystemBase {
   private SparkMotor intake;
   private Boolean isHopperEnabled = false;
   private Boolean isIntakeEnabled = false;
-  private Solenoid intakePiston; 
+  private DoubleSolenoid intakePiston;
+
   public Intake() {
-
-    if(!RobotContainer.pancake){
+    intake = new SparkMotor(Constants.INTAKE_MOTOR);
+    if (!RobotContainer.pancake) {
       hopper = new SparkMotor(Constants.HOPPER_MOTOR);
-    intakePiston = new Solenoid(Constants.INTAKE_PISTON);
-    intake  = new SparkMotor(Constants.INTAKE_MOTOR);
-
+      intakePiston = new DoubleSolenoid(Constants.INTAKE_PISTON_FORWARD , Constants.INTAKE_PISTON_REVERSE);
     }
   }
-  public void enableHopper(Boolean enable){
-    if(enable){
-      if(!RobotContainer.pancake)
-      hopper.set(0.3);
+
+  public void enableHopper(Boolean enable) {
+    if (enable) {
+      if (!RobotContainer.pancake)
+        hopper.set(0.3);
       isHopperEnabled = true;
-    } else{
-      if(!RobotContainer.pancake)
-      hopper.set(0.0);
+    } else {
+      if (!RobotContainer.pancake)
+        hopper.set(0.0);
       isHopperEnabled = false;
     }
   }
-  public void enableIntake(Boolean enable){
-    if(enable){
-      if(!RobotContainer.pancake)
-      intake.set(0.5);
+
+  public void enableIntake(Boolean enable) {
+    if (enable) {
+      if (!RobotContainer.pancake)
+        intake.set(-1.0);
       isIntakeEnabled = true;
-    } else{
-      if(!RobotContainer.pancake)
-      intake.set(0.0);
+      System.out.println("intake enabled="+isIntakeEnabled);
+
+    } else {
+      if (!RobotContainer.pancake)
+        intake.set(0.0);
       isIntakeEnabled = false;
+      System.out.println("intake enabled="+isIntakeEnabled);
+
     }
   }
-  public boolean isIntakeEnabled(){
+
+  public boolean isIntakeEnabled() {
     return isIntakeEnabled;
   }
-  public void lowerIntake(){
+
+  public void lowerIntake() {
+    if (!RobotContainer.pancake)
+      intakePiston.set(Value.kReverse);
+  }
+  public void repowerIntake(){
     if(!RobotContainer.pancake)
-    intakePiston.set(true);
+    intakePiston.set(Value.kForward);
   }
 
   @Override

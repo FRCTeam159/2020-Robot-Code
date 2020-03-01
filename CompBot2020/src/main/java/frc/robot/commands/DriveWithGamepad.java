@@ -21,9 +21,9 @@ import frc.robot.RobotContainer;
  */
 public class DriveWithGamepad extends CommandBase implements Constants {
   double powerScale = 0.45;
-  double turnScale = 0.65;
-  double moveExponent = 0.75; // Raise moveExponent and turnExponent for more control at lower speeds,
-  double turnExponent = 0.75; // and lower them for more control at higher speeds.
+  double turnScale = 0.35;
+  double moveExponent = 0.5; // Raise moveExponent and turnExponent for more control at lower speeds,
+  double turnExponent = 1.0; // and lower them for more control at higher speeds.
   double xMinT = 0.2;
   double xMinO = 0.05;
   double zMinT = 0.05;
@@ -45,6 +45,7 @@ public class DriveWithGamepad extends CommandBase implements Constants {
   @Override
   public void initialize() {
     System.out.println("DriveWithGamepad initialized");
+    driveTrain.setLowGear();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -58,7 +59,7 @@ public class DriveWithGamepad extends CommandBase implements Constants {
     double z = zs;
     double x = xs;
 
-    if(shifter.newState()){
+    if (shifter.newState()) {
       if (driveTrain.inLowGear())
         driveTrain.setHighGear();
       else
@@ -87,6 +88,7 @@ public class DriveWithGamepad extends CommandBase implements Constants {
 
     turnValue *= Math.abs(moveValue) * (1 - turnScale) + turnScale;
     if (!RobotContainer.targeting.isTargeting()) {
+      if(!Robot.isAuto)
       driveTrain.arcadeDrive(moveValue, turnValue);
     }
   }

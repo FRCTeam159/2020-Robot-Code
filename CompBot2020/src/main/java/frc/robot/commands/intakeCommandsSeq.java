@@ -12,25 +12,16 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutonomousCommand extends SequentialCommandGroup {
+public class intakeCommandsSeq extends SequentialCommandGroup {
   /**
-   * Creates a new AutonomousCommand.
+   * Creates a new intakeCommandsSeq.
    */
-  public AutonomousCommand() {
+  public intakeCommandsSeq() {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super(
-      new AutoSetup()
+    super(    
+    new InitIntake().withTimeout(2.0)
     ,
-      new AutoAngle()
-    ,
-      new DriveBack().withTimeout(1.0)
-    ,
-      new AdjustTarget()
-    ,
-      new StartFeeder().withTimeout(3.0)
-    ,
-      new EndShooting().withTimeout(0.5)
-      );
+    new repowerIntake());
   }
 }

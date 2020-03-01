@@ -33,6 +33,7 @@ public class InitIntake extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    System.out.println("Intake init End");
     if(interrupted){
       System.out.println("The init intake command ran and was interupted");
     }

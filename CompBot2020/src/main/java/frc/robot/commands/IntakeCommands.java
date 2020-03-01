@@ -27,7 +27,8 @@ public class IntakeCommands extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.enableHopper(true);
+
+    //intake.enableIntake(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

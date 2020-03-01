@@ -25,20 +25,21 @@ public interface Constants {
   public static final int FRONT_RIGHT = 2;
   public static final int BACK_RIGHT = 1;
 
-  public static final int COLOR_MOTOR = 5;
+  public static final int COLOR_MOTOR = 11;
   public static final int HOPPER_MOTOR = 12;
-  public static final int FEED_MOTOR = 5;
-  public static final int ANGLE_MOTOR = 5;
-  public static final int SHOOT_MOTOR1 = 5;
-  public static final int SHOOT_MOTOR2 = 5;
-  public static final int INTAKE_MOTOR = 5;
-  public static final int CLIMB_MOTOR = 5;
+  public static final int FEED_MOTOR = 10;
+  public static final int ANGLE_MOTOR = 9;
+  public static final int SHOOT_MOTOR_R = 5;
+  public static final int SHOOT_MOTOR_L = 6;
+  public static final int INTAKE_MOTOR = 8;
+  public static final int CLIMB_MOTOR = 7;
   // Piston IDs
   public static final int GEAR_SHIFTER_FORWARD = 0;
   public static final int GEAR_SHIFTER_REVERSE = 1;
   public static final int COLOR_PISTON_FORWARD = 2;
   public static final int COLOR_PISTON_REVERSE = 3;
-  public static final int INTAKE_PISTON = 4;
+  public static final int INTAKE_PISTON_FORWARD = 2;
+  public static final int INTAKE_PISTON_REVERSE = 3;
 
   // Servo IDs
   public static final int ARM_SERVO = 0;
@@ -72,4 +73,20 @@ public interface Constants {
   public static final int CENTER_POSITION = 1;
   public static final int RIGHT_POSITION = 2;
   public static final int ILLEGAL_POSITION = 3;
+
+  // Physical Dimensions
+
+  public static double radsToDegrees = 360/(2 * Math.PI);
+
+  public static double launcherWheelDiameter = 4.0 / 12; //ft
+  public static double launcherWheelCircumference = launcherWheelDiameter * Math.PI; //ft
+  public static double targetWidth = 34.0; // physical width of target (inches)
+  // ht of target center from floor
+  public static double targetFloorHeight = 8 * 12 + 2.25; // actual field target ht
+  //public static double targetFloorHeight = 38.0; // test target height
+  public static double cameraFloorHeight =16.0; 
+  public static double targetHeight = targetFloorHeight-cameraFloorHeight; //center of target height from floor in ft
+
+  static void configure(){
+  }
 }

@@ -7,30 +7,18 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutonomousCommand extends SequentialCommandGroup {
+public class AutoSetup extends ParallelCommandGroup {
   /**
-   * Creates a new AutonomousCommand.
+   * Creates a new autoSetup.
    */
-  public AutonomousCommand() {
+  public AutoSetup() {
     // Add your commands in the super() call, e.g.
-    // super(new FooCommand(), new BarCommand());
-    super(
-      new AutoSetup()
-    ,
-      new AutoAngle()
-    ,
-      new DriveBack().withTimeout(1.0)
-    ,
-      new AdjustTarget()
-    ,
-      new StartFeeder().withTimeout(3.0)
-    ,
-      new EndShooting().withTimeout(0.5)
-      );
+    // super(new FooCommand(), new BarCommand());super();
+    super(new intakeCommandsSeq(), new startLaunchWheels().withTimeout(1.0), new FindZero());
   }
 }

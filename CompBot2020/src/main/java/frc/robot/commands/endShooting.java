@@ -10,11 +10,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class endShooting extends CommandBase {
+public class EndShooting extends CommandBase {
   /**
    * Creates a new endShooting.
    */
-  public endShooting() {
+  public EndShooting() {
     addRequirements(RobotContainer.shooter);
     // Use addRequirements() here to declare subsystem dependencies.
   }
