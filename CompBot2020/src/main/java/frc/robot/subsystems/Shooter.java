@@ -31,7 +31,7 @@ public class Shooter extends SubsystemBase {
   public CANDigitalInput reverse;
 
   public Shooter() {
-    shooterMotorValue = 1.0;
+    shooterMotorValue = 0.91;
 
     if (!RobotContainer.pancake) {
       angleMotor = new SparkMotor(Constants.ANGLE_MOTOR);
@@ -78,7 +78,7 @@ public class Shooter extends SubsystemBase {
   public void feed(boolean isFeed) {
     if (!RobotContainer.pancake) {
       if (isFeed) {
-        feedMotor.set(0.4);
+        feedMotor.set(0.5);
       } else {
         feedMotor.set(0.0);
       }

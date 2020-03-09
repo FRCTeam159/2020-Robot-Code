@@ -7,34 +7,20 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.RobotContainer;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutonomousCommand extends SequentialCommandGroup {
-  /**
-   * Creates a new AutonomousCommand.
-   */
-  public AutonomousCommand() {
-    // Add your commands in the super() call, e.g.
-    // super(new FooCommand(), new BarCommand());
-    super(
-      new AutoSetup()
-    ,
-      new AutoAngle()
-    ,
-      new DriveBack().withTimeout(1.0)
-    ,
-      new AdjustTarget()
-    , 
-      new EndAutoDrive()
-    ,
-      new startLaunchWheels().withTimeout(2.0)
-    ,
-      new StartFeeder().withTimeout(3.0)
-    ,
-      new EndShooting().withTimeout(0.5)
-      );
+public class EndAutoDrive extends InstantCommand {
+  public EndAutoDrive() {
+    // Use addRequirements() here to declare subsystem dependencies.
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    RobotContainer.driveTrain.arcadeDrive(0.0, 0.0);
   }
 }

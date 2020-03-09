@@ -36,7 +36,7 @@ public class Intake extends SubsystemBase {
   public void enableHopper(Boolean enable) {
     if (enable) {
       if (!RobotContainer.pancake)
-        hopper.set(0.3);
+        hopper.set(0.5);
       isHopperEnabled = true;
     } else {
       if (!RobotContainer.pancake)

@@ -28,10 +28,10 @@ public class Targeting extends SubsystemBase implements Constants{
   private NetworkTableEntry hTweek;
   private NetworkTableEntry vTweek;
 
-  public static double hToll = 4.0;
+  public static double hToll = 2.5;
   public static double vToll = 4.0;
-  public static double hVMax = 100.0;
-  public static double vVMax = 400.0;
+  public static double hVMax = 0.1;
+  public static double vVMax = 2.0;
   public double vudge = 0;
 
   NetworkTable table;
@@ -211,8 +211,8 @@ public class Targeting extends SubsystemBase implements Constants{
   }
 
   protected class AdjustH extends PIDController {
-    static final double kP = 0.008;
-    static final double kI = 0.000;
+    static final double kP = 0.009;
+    static final double kI = 0.0008;
     static final double kD = 0.00;
 
     public AdjustH() {
@@ -250,14 +250,14 @@ public class Targeting extends SubsystemBase implements Constants{
   }
 
   protected class AdjustV extends PIDController {
-    static final double vP = 0.005;
-    static final double vI = 0.0;
+    static final double vP = 0.008;
+    static final double vI = 0.0004;
     static final double vD = 0.0;
 
     public AdjustV() {
       super(vP, vI, vD, 0.02);
       setTolerance(vToll, vVMax);
-      setSetpoint(0.0);
+      setSetpoint(-23.0);
     }
 
     public double verticalTweek() {

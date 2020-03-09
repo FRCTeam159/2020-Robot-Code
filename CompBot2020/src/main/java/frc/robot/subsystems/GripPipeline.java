@@ -43,9 +43,9 @@ public class GripPipeline implements VisionPipeline {
 		//double[] hsvThresholdHue = {85.35187038107914, 100.57620000828645};
 		//double[] hsvThresholdSaturation = {48.156474820143885, 255.0};
 		//double[] hsvThresholdValue = {119.24460431654676, 255.0};
-		double[] hsvThresholdHue = {80, 105};
+		double[] hsvThresholdHue = {70, 115};
 		double[] hsvThresholdSaturation = {48.156474820143885, 255.0};
-		double[] hsvThresholdValue = {119.24460431654676, 255.0};
+		double[] hsvThresholdValue = {40.24460431654676, 255.0};
 		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
 		// Step Find_Contours0:
@@ -68,8 +68,8 @@ public class GripPipeline implements VisionPipeline {
 		// uncomment for actual target
 		//double filterContoursMinRatio = 1.75;
 		//double filterContoursMaxRatio = 2.25;
-		 double filterContoursMinRatio = 1;
-		 double filterContoursMaxRatio = 4;
+		 double filterContoursMinRatio = 0.5;
+		 double filterContoursMaxRatio = 5;
 		// uncomment for block target
 		//double filterContoursMinRatio = 5;
 		//double filterContoursMaxRatio = 10;

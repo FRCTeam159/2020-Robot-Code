@@ -19,6 +19,6 @@ public class AutoSetup extends ParallelCommandGroup {
   public AutoSetup() {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());super();
-    super(new intakeCommandsSeq(), new startLaunchWheels().withTimeout(1.0), new FindZero());
+    super(new intakeCommandsSeq(), new FindZero());
   }
 }

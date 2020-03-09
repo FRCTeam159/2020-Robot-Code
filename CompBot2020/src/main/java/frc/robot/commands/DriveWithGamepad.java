@@ -21,7 +21,7 @@ import frc.robot.RobotContainer;
  */
 public class DriveWithGamepad extends CommandBase implements Constants {
   double powerScale = 0.45;
-  double turnScale = 0.35;
+  double turnScale = 0.45;
   double moveExponent = 0.5; // Raise moveExponent and turnExponent for more control at lower speeds,
   double turnExponent = 1.0; // and lower them for more control at higher speeds.
   double xMinT = 0.2;
