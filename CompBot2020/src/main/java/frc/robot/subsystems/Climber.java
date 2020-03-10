@@ -7,13 +7,25 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.revrobotics.SparkMax;
 
-public class Climber extends SubsystemBase {
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+
+public class Climber extends SubsystemBase implements Constants{
   /**
    * Creates a new Climber.
    */
+  SparkMotor climbMotor;
+  DoubleSolenoid climbLockPiston;
+  DoubleSolenoid climbIntPiston;
+  public static boolean climbMode = false;
   public Climber() {
+    climbMotor  = new SparkMotor(CLIMB_MOTOR);
+    climbLockPiston = new DoubleSolenoid(CLIMBLOCK_PISTON_FORWARD, CLIMBLOCK_PISTON_REVERSE);
+    climbIntPiston = new DoubleSolenoid(CLIMBINT_PISTON_FORWARD, CLIMBINT_PISTON_REVERSE);
 
   }
 
@@ -22,6 +34,19 @@ public class Climber extends SubsystemBase {
     // This method will be called once per scheduler run
   }
   public void initiateClimb(){
+    climbIntPiston.set(Value.kReverse);
+    climbMode = true;
     
+  }
+  public void climb(double value){
+    if(value > 0.1 || value < 0.1){
+      climbLockPiston.set(Value.kForward);
+    } else{
+      climbLockPiston.set(Value.kReverse);
+    }
+    climbMotor.set(0.4 * value);
+  }
+  public boolean isClimbing(){
+    return climbMode;
   }
 }

@@ -40,6 +40,10 @@ public interface Constants {
   public static final int COLOR_PISTON_REVERSE = 3;
   public static final int INTAKE_PISTON_FORWARD = 2;
   public static final int INTAKE_PISTON_REVERSE = 3;
+  public static final int CLIMBLOCK_PISTON_FORWARD = 4;
+  public static final int CLIMBLOCK_PISTON_REVERSE = 5;
+  public static final int CLIMBINT_PISTON_FORWARD = 6;
+  public static final int CLIMBINT_PISTON_REVERSE = 7;
 
   // Servo IDs
   public static final int ARM_SERVO = 0;
